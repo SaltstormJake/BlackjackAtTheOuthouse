@@ -111,7 +111,9 @@ public class blackjackUIScript : MonoBehaviour
 
     private void OnDoubleDownClick()
     {
-
+        dealer.DoubleDown();
+        SetHitAndStand(false);
+        SetDoubleDown(false);
     }
 
     private void OnSplitClick()

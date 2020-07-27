@@ -27,7 +27,6 @@ public class playerScript : MonoBehaviour
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
         results.Win(betAmount);
-
         UI.ChangeFunds(betAmount);
     }
 
@@ -37,7 +36,6 @@ public class playerScript : MonoBehaviour
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
         results.Lose(betAmount);
-
         UI.ChangeFunds(-betAmount);
     }
 
@@ -46,6 +44,7 @@ public class playerScript : MonoBehaviour
         ToggleTableLean();
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
+        results.Push();
     }
 
     // Start is called before the first frame update
@@ -66,30 +65,16 @@ public class playerScript : MonoBehaviour
         {
             hand.Add(card);
             handValue += card.GetComponent<cardScript>().GetValue();
-            //EvaluateHand();
         }
         else
             Debug.Log("Not a card!");
     }
 
-    void EvaluateHand()
-    {
-        //Debug.Log(handValue);
-        if (hand.Count >= 5) {
-            Debug.Log("Put 5 card thingy here");
-        }
-        else if (handValue == 21)
-        {
-            Debug.Log("Put Blackjack function here");
-        }
-        else if (handValue > 21)
-        {
-            Debug.Log("Put bust function here");
-        }
-    }
-
     public int GetHandValue()
     {
+        int handValue = 0;
+        foreach(GameObject g in hand)
+            handValue += g.GetComponent<cardScript>().GetValue();
         return handValue;
     }
 
@@ -136,5 +121,24 @@ public class playerScript : MonoBehaviour
             Destroy(g);
         hand.Clear();
         handValue = 0;
+    }
+
+    public void PrintHand()
+    {
+        foreach (GameObject g in hand)
+        {
+            cardScript script = g.GetComponent<cardScript>();
+            Debug.Log(script.GetFace() + " of " + script.GetSuit() + "(" + script.GetValue() + ")");
+        }
+    }
+
+    public void DoubleBet()
+    {
+        betAmount *= 2;
+    }
+
+    public int GetBetAmount()
+    {
+        return betAmount;
     }
 }

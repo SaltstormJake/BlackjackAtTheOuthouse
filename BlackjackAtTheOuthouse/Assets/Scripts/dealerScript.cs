@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class dealerScript : MonoBehaviour
 {
@@ -100,19 +101,19 @@ public class dealerScript : MonoBehaviour
     {
         DealCardToPlayer();
         yield return new WaitForSeconds(1.5f);
-        if (player.GetHandSize() == 5)
-            StartCoroutine(Stand());
-        else if (player.GetHandValue() < 21)
-            UI.SetHitAndStand(true);
-        else if (player.GetHandValue() > 21)
+        if (player.GetHandValue() > 21)
         {
             if (player.CheckAces())
+            {
                 UI.SetHitAndStand(true);
+            }
             else
                 StartCoroutine(DealerWins());
         }
+        else if (player.GetHandSize() == 5 || player.GetHandValue() == 21)
+            StartCoroutine(Stand());
         else
-            StartCoroutine(Stand()); //only reached if player has 21
+            UI.SetHitAndStand(true);
     }
 
     public IEnumerator Stand()
@@ -125,6 +126,8 @@ public class dealerScript : MonoBehaviour
         {
             DealCardToSelf();
             yield return new WaitForSeconds(1.0f);
+            if (GetHandValue() > 21)
+                CheckAces();
         }
         if (GetHandValue() > 21)
             StartCoroutine(PlayerWins());
@@ -132,6 +135,11 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(EvaluateHands());
     }
 
+    public void DoubleDown()
+    {
+        player.DoubleBet();
+        StartCoroutine(Hit());
+    }
 
     private IEnumerator EvaluateHands()
     {
@@ -140,7 +148,7 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(PlayerWins());
         else if (GetHandSize() == 5 && player.GetHandSize() < 5)
             StartCoroutine(DealerWins());
-        if (GetHandValue() > player.GetHandValue())
+        else if (GetHandValue() > player.GetHandValue())
         {
             StartCoroutine(DealerWins());
         }
@@ -155,7 +163,9 @@ public class dealerScript : MonoBehaviour
     private IEnumerator PlayerWins()
     {
         StartCoroutine(player.WinHand());
-        yield return null;
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        Idle();
     }
 
     private IEnumerator DealerWins()
@@ -164,12 +174,13 @@ public class dealerScript : MonoBehaviour
         anim.Play("godBossSnapAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        anim.Play("godBossIdleAnimation");
-        anim.wrapMode = WrapMode.Loop;
+        Idle();
     }
 
     private IEnumerator Push()
     {
+        StartCoroutine(player.Push());
+        Idle();
         yield return null;
     }
 
@@ -243,6 +254,9 @@ public class dealerScript : MonoBehaviour
 
     public int GetHandValue()
     {
+        int handValue = 0;
+        foreach (GameObject g in hand)
+            handValue += g.GetComponent<cardScript>().GetValue();
         return handValue;
     }
 
@@ -258,4 +272,25 @@ public class dealerScript : MonoBehaviour
         hand.Clear();
         handValue = 0;
     }
+
+    public bool CheckAces()
+    {
+        GameObject ace = hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11);
+        if (ace != null)
+        {
+            ace.GetComponent<cardScript>().changeValue(1);
+            return true;
+        }
+        return false;
+    }
+
+    public void PrintHand()
+    {
+        foreach (GameObject g in hand)
+        {
+            cardScript script = g.GetComponent<cardScript>();
+            Debug.Log(script.GetFace() + " of " + script.GetSuit() + "(" + script.GetValue() + ")");
+        }
+    }
 }
+
