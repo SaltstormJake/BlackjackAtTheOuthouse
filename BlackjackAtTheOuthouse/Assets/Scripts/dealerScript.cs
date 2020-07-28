@@ -74,8 +74,12 @@ public class dealerScript : MonoBehaviour
 
     public IEnumerator Deal()
     {
-        anim.wrapMode = WrapMode.Once;
-        while (anim.isPlaying)
+        anim.Stop();
+        Debug.Log(deck.GetCardsRemaining());
+        if (deck.GetCardsRemaining() < 10)
+            yield return StartCoroutine(ReshuffleDeck());
+        //anim.wrapMode = WrapMode.Once;
+        while (anim.isPlaying || voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
         anim.Play("godBossPointToDeckAnimation");
         while (anim.isPlaying)
@@ -99,6 +103,7 @@ public class dealerScript : MonoBehaviour
     
     public IEnumerator Hit()
     {
+        Debug.Log(player.GetHandSize());
         DealCardToPlayer();
         yield return new WaitForSeconds(1.5f);
         if (player.GetHandValue() > 21)
@@ -133,6 +138,17 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(PlayerWins());
         else
             StartCoroutine(EvaluateHands());
+    }
+
+    private IEnumerator ReshuffleDeck()
+    {
+        yield return new WaitForSeconds(1.0f);
+        player.ToggleTableLean();
+        voice.clip = voiceLines[3];
+        voice.Play();
+        while (voice.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        player.ToggleTableLean();
     }
 
     public void DoubleDown()
@@ -243,7 +259,7 @@ public class dealerScript : MonoBehaviour
     private void Idle()
     {
         anim.Play("godBossIdleAnimation");
-        anim.wrapMode = WrapMode.Loop;
+        //anim.wrapMode = WrapMode.Loop;
     }
 
     private void AddCardToHand(GameObject card)

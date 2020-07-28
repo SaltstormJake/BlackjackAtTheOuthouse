@@ -69,12 +69,17 @@ public class deckScript : MonoBehaviour
 
     public void ShuffleAndRefill()
     {
-        Deck = Resources.LoadAll("Playing Cards", typeof(GameObject)).Cast<GameObject>().ToArray();
+        Shuffle();
         iterator = Deck.Length - 1;
     }
 
     void OutOfCards()
     {
+        Debug.Log("Out of cards. (This shouldn't be possible.");
+    }
 
+    public int GetCardsRemaining()
+    {
+        return iterator;
     }
 }
