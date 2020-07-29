@@ -141,4 +141,9 @@ public class playerScript : MonoBehaviour
     {
         return betAmount;
     }
+
+    public void SetBetAmount(int x)
+    {
+        betAmount = x;
+    }
 }

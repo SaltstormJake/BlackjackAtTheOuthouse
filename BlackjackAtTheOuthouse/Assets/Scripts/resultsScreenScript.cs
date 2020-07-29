@@ -12,6 +12,10 @@ public class resultsScreenScript : MonoBehaviour
     [SerializeField] Button dealAgainButton;
     [SerializeField] Button quitButton;
 
+    [SerializeField] Slider betSlider;
+    [SerializeField] GameObject betText;
+    [SerializeField] Text betTextNumber;
+
     [SerializeField] blackjackUIScript UI;
 
     private void Awake()
@@ -28,7 +32,10 @@ public class resultsScreenScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (betTextNumber.IsActive())
+        {
+            betTextNumber.text = betSlider.value.ToString();
+        }
     }
 
     public void Win(int amount)
@@ -38,6 +45,11 @@ public class resultsScreenScript : MonoBehaviour
         winNumber.text = amount.ToString();
         dealAgainButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
+
+        betSlider.gameObject.SetActive(true);
+        betSlider.maxValue = UI.GetFunds() + amount;
+        betText.SetActive(true);
+        betTextNumber.gameObject.SetActive(true);
     }
 
     public void Lose(int amount)
@@ -47,6 +59,11 @@ public class resultsScreenScript : MonoBehaviour
         loseNumber.text = amount.ToString();
         dealAgainButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
+
+        betSlider.gameObject.SetActive(true);
+        betSlider.maxValue = UI.GetFunds() - amount;
+        betText.SetActive(true);
+        betTextNumber.gameObject.SetActive(true);
     }
 
     public void Push()
@@ -63,12 +80,16 @@ public class resultsScreenScript : MonoBehaviour
         pushText.SetActive(false);
         dealAgainButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
+
+        betSlider.gameObject.SetActive(false);
+        betText.SetActive(false);
+        betTextNumber.gameObject.SetActive(false);
     }
 
     void DealButtonOnClick()
     {
+        UI.OnDealAgainClick((int)betSlider.value);
         DisableAll();
-        UI.OnDealClick();
     }
 
     void QuitButtonOnClick()

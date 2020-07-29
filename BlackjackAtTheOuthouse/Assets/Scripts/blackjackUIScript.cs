@@ -12,11 +12,15 @@ public class blackjackUIScript : MonoBehaviour
     [SerializeField] Button DoubleDownButton;
     [SerializeField] Button SplitButton;
     [SerializeField] Button InsuranceButton;
+    [SerializeField] Slider betSlider;
+    [SerializeField] GameObject betText;
+    [SerializeField] Text betTextNumber;
+    [SerializeField] GameObject fundsText;
     [SerializeField] Text fundsTextNumber;
     [SerializeField] dealerScript dealer;
     [SerializeField] playerScript player;
     int funds = 1000;
-
+    int betAmount;
 
     private void Awake()
     {
@@ -39,7 +43,10 @@ public class blackjackUIScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (betTextNumber.IsActive())
+        {
+            betTextNumber.text = betSlider.value.ToString();
+        }
     }
 
     public void ClearTable()
@@ -52,6 +59,18 @@ public class blackjackUIScript : MonoBehaviour
     public void SetDeal(bool enabled)
     {
         DealButton.gameObject.SetActive(enabled);
+        betSlider.gameObject.SetActive(enabled);
+        betText.SetActive(enabled);
+        betTextNumber.gameObject.SetActive(enabled);
+        betSlider.maxValue = funds;
+
+        SetFunds(true);
+    }
+
+    public void SetFunds(bool enabled)
+    {
+        fundsText.SetActive(true);
+        fundsTextNumber.gameObject.SetActive(true);
     }
 
     public void SetHitAndStand(bool enabled)
@@ -85,12 +104,27 @@ public class blackjackUIScript : MonoBehaviour
     {
         funds += i;
         fundsTextNumber.text = funds.ToString();
+        Debug.Log(funds);
+    }
+
+    public int GetFunds()
+    {
+        return funds;
     }
 
     public void OnDealClick()
     {
         ClearTable();
+        player.SetBetAmount((int)betSlider.value);
         SetDeal(false);
+        StartCoroutine(dealer.Deal());
+        player.ToggleTableLean();
+    }
+
+    public void OnDealAgainClick(int bet)
+    {
+        ClearTable();
+        player.SetBetAmount(bet);
         StartCoroutine(dealer.Deal());
         player.ToggleTableLean();
     }
@@ -111,7 +145,7 @@ public class blackjackUIScript : MonoBehaviour
 
     private void OnDoubleDownClick()
     {
-        dealer.DoubleDown();
+        StartCoroutine(dealer.DoubleDown());
         SetHitAndStand(false);
         SetDoubleDown(false);
     }

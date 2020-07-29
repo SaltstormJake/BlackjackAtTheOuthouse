@@ -68,13 +68,15 @@ public class dealerScript : MonoBehaviour
         deck.Shuffle();
         while (voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        anim.Play("godBossIdleAnimation");
+        Idle();
         UI.SetDeal(true);
     }
 
     public IEnumerator Deal()
     {
-        anim.Stop();
+        anim.CrossFade("godBossResetArmsAnimation");
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
         Debug.Log(deck.GetCardsRemaining());
         if (deck.GetCardsRemaining() < 10)
             yield return StartCoroutine(ReshuffleDeck());
@@ -146,15 +148,22 @@ public class dealerScript : MonoBehaviour
         player.ToggleTableLean();
         voice.clip = voiceLines[3];
         voice.Play();
+        yield return new WaitForSeconds(2.0f);
+        deck.GetComponent<Animation>().Play("deckShuffleAnimation");
+        anim.Play("godBossShuffleAnimation");
+        deck.ShuffleAndRefill();
         while (voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
         player.ToggleTableLean();
     }
 
-    public void DoubleDown()
+    public IEnumerator DoubleDown()
     {
         player.DoubleBet();
-        StartCoroutine(Hit());
+        Debug.Log(player.GetHandSize());
+        DealCardToPlayer();
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(Stand());
     }
 
     private IEnumerator EvaluateHands()
@@ -187,7 +196,7 @@ public class dealerScript : MonoBehaviour
     private IEnumerator DealerWins()
     {
         StartCoroutine(player.LoseHand());
-        anim.Play("godBossSnapAnimation");
+        anim.CrossFade("godBossSnapAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
         Idle();
@@ -258,7 +267,7 @@ public class dealerScript : MonoBehaviour
 
     private void Idle()
     {
-        anim.Play("godBossIdleAnimation");
+        anim.CrossFade("godBossIdleAnimation");
         //anim.wrapMode = WrapMode.Loop;
     }
 
