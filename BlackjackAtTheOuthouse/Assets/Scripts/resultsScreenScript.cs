@@ -18,6 +18,8 @@ public class resultsScreenScript : MonoBehaviour
 
     [SerializeField] blackjackUIScript UI;
 
+   // public enum Result { Win, Lose, Push };
+
     private void Awake()
     {
         dealAgainButton.onClick.AddListener(DealButtonOnClick);
@@ -34,7 +36,7 @@ public class resultsScreenScript : MonoBehaviour
     {
         if (betTextNumber.IsActive())
         {
-            betTextNumber.text = betSlider.value.ToString();
+            betTextNumber.text = (betSlider.value * 50).ToString();
         }
     }
 
@@ -47,7 +49,7 @@ public class resultsScreenScript : MonoBehaviour
         quitButton.gameObject.SetActive(true);
 
         betSlider.gameObject.SetActive(true);
-        betSlider.maxValue = UI.GetFunds() + amount;
+        betSlider.maxValue = (UI.GetFunds() + amount) / 50;
         betText.SetActive(true);
         betTextNumber.gameObject.SetActive(true);
     }
@@ -61,7 +63,7 @@ public class resultsScreenScript : MonoBehaviour
         quitButton.gameObject.SetActive(true);
 
         betSlider.gameObject.SetActive(true);
-        betSlider.maxValue = UI.GetFunds() - amount;
+        betSlider.maxValue = (UI.GetFunds() - amount) / 50;
         betText.SetActive(true);
         betTextNumber.gameObject.SetActive(true);
     }
@@ -71,6 +73,11 @@ public class resultsScreenScript : MonoBehaviour
         pushText.SetActive(true);
         dealAgainButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
+
+        betSlider.gameObject.SetActive(true);
+        betSlider.maxValue = UI.GetFunds() / 50;
+        betText.SetActive(true);
+        betTextNumber.gameObject.SetActive(true);
     }
 
     void DisableAll()
@@ -88,7 +95,7 @@ public class resultsScreenScript : MonoBehaviour
 
     void DealButtonOnClick()
     {
-        UI.OnDealAgainClick((int)betSlider.value);
+        UI.OnDealAgainClick((int)betSlider.value * 50);
         DisableAll();
     }
 

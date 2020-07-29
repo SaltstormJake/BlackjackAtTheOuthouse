@@ -1,0 +1,19 @@
+To-do list:
+
+Fix 5-card rule
+Fix busting when aces are drawn (happens with dealer, might not happen with player)
+Add sound to player winning, shuffle, and push animations
+Add banter voice lines
+Add insurance
+Add splitting
+Prevent cards from clipping through table
+Touch up graphics
+Make a more consistent results screen, use enums to make it look better
+replace footstep sound
+
+credits screen
+options menu
+
+things to include on options menu:
+show hand value on UI
+use 5 card rule

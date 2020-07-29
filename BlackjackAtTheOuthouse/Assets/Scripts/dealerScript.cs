@@ -77,7 +77,6 @@ public class dealerScript : MonoBehaviour
         anim.CrossFade("godBossResetArmsAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        Debug.Log(deck.GetCardsRemaining());
         if (deck.GetCardsRemaining() < 10)
             yield return StartCoroutine(ReshuffleDeck());
         //anim.wrapMode = WrapMode.Once;
@@ -99,7 +98,8 @@ public class dealerScript : MonoBehaviour
         else
         {
             UI.SetHitAndStand(true);
-            UI.SetDoubleDown(true);
+            if(UI.GetFunds() >= player.GetBetAmount() * 2)
+                UI.SetDoubleDown(true);
         }
     }
     
@@ -188,6 +188,7 @@ public class dealerScript : MonoBehaviour
     private IEnumerator PlayerWins()
     {
         StartCoroutine(player.WinHand());
+        anim.CrossFade("godBossSlapHeadAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
         Idle();
@@ -205,8 +206,10 @@ public class dealerScript : MonoBehaviour
     private IEnumerator Push()
     {
         StartCoroutine(player.Push());
+        anim.CrossFade("godBossShrugAnimation");
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
         Idle();
-        yield return null;
     }
 
 
