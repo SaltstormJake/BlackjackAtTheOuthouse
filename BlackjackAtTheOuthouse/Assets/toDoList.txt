@@ -1,19 +1,33 @@
 To-do list:
 
-Fix 5-card rule
-Fix busting when aces are drawn (happens with dealer, might not happen with player)
-Add sound to player winning, shuffle, and push animations
+FEATURES:
+Add sound to shuffle and push animations
+Add sound to drawing and playing cards
 Add banter voice lines
 Add insurance
 Add splitting
-Prevent cards from clipping through table
 Touch up graphics
 Make a more consistent results screen, use enums to make it look better
-replace footstep sound
 
+
+FIXES:
+fix bug that plays idle animation forever when you press the deal button too quickly
+Fix 5-card rule
+Fix busting when aces are drawn (happens with dealer, might not happen with player)
+Prevent cards from clipping through table
+replace footstep sound
+fix cards from stuttering
+fix dealer hand position so 5th card doesn't clip
+smoothen transitions, especially the one between pointing at the deck and the dealer snapping
+fix betting odds to actually be 2:1
+
+
+MENU ADDITIONS:
 credits screen
 options menu
 
-things to include on options menu:
+OPTIONS:
 show hand value on UI
-use 5 card rule
+use 5 card rule (maybe? Risks crashing the game without it)
+sound control
+music control
