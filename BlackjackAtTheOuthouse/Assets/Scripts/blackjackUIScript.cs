@@ -22,6 +22,8 @@ public class blackjackUIScript : MonoBehaviour
     int funds = 1000;
     int betAmount;
 
+    public enum Result { PlayerWins, DealerWins, PlayerBlackjack, DealerBlackjack, PlayerBust, DealerBust, Player5Cards, Dealer5Cards, Push };
+
     private void Awake()
     {
         UIObjects = GameObject.FindGameObjectsWithTag("UIOnly");

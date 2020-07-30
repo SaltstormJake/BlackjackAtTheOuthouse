@@ -7,8 +7,8 @@ Add banter voice lines
 Add insurance
 Add splitting
 Touch up graphics
-Make a more consistent results screen, use enums to make it look better
-
+Add events to occur when the player runs out of money or passes a certain threshold
+Make dealer hit on soft 17
 
 FIXES:
 fix bug that plays idle animation forever when you press the deal button too quickly

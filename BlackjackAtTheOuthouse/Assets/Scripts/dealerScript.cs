@@ -12,6 +12,8 @@ public class dealerScript : MonoBehaviour
     [SerializeField] deckScript deck;
     [SerializeField] blackjackUIScript UI;
     [SerializeField] playerScript player;
+    [SerializeField] resultsScreenScript results;
+
     private Animation anim;
     private AudioSource voice;
     private Vector3 playerHandPosition = new Vector3(180, 2, 25);
@@ -79,7 +81,6 @@ public class dealerScript : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         if (deck.GetCardsRemaining() < 10)
             yield return StartCoroutine(ReshuffleDeck());
-        //anim.wrapMode = WrapMode.Once;
         while (anim.isPlaying || voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
         anim.Play("godBossPointToDeckAnimation");
@@ -93,16 +94,16 @@ public class dealerScript : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         DealCardToSelfFaceDown();
         yield return new WaitForSeconds(1.5f);
-        if (player.GetHandValue() == 21)
-            StartCoroutine(Stand());
+        if (player.GetHandValue() == 21 || GetHandValue() == 21)
+            StartCoroutine(Blackjack());
         else
         {
             UI.SetHitAndStand(true);
-            if(UI.GetFunds() >= player.GetBetAmount() * 2)
+            if (UI.GetFunds() >= player.GetBetAmount() * 2)
                 UI.SetDoubleDown(true);
         }
     }
-    
+
     public IEnumerator Hit()
     {
         Debug.Log(player.GetHandSize());
@@ -115,7 +116,7 @@ public class dealerScript : MonoBehaviour
                 UI.SetHitAndStand(true);
             }
             else
-                StartCoroutine(DealerWins());
+                StartCoroutine(React(blackjackUIScript.Result.PlayerBust));
         }
         else if (player.GetHandSize() == 5 || player.GetHandValue() == 21)
             StartCoroutine(Stand());
@@ -137,10 +138,26 @@ public class dealerScript : MonoBehaviour
                 CheckAces();
         }
         if (GetHandValue() > 21)
-            StartCoroutine(PlayerWins());
+            StartCoroutine(React(blackjackUIScript.Result.DealerBust));
         else
             StartCoroutine(EvaluateHands());
     }
+
+    private IEnumerator Blackjack()
+    {
+        cardScript script = hand[1].GetComponent<cardScript>();
+        StartCoroutine(script.Flip());
+        StartCoroutine(script.RaiseAndLowerCard());
+        yield return new WaitForSeconds(1.5f);
+        if (player.GetHandValue() > GetHandValue())
+            StartCoroutine(React(blackjackUIScript.Result.PlayerBlackjack));
+        else if (GetHandValue() > player.GetHandValue())
+            StartCoroutine(React(blackjackUIScript.Result.DealerBlackjack));
+        else
+            StartCoroutine(React(blackjackUIScript.Result.Push));
+        
+    }
+
 
     private IEnumerator ReshuffleDeck()
     {
@@ -170,22 +187,60 @@ public class dealerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         if (player.GetHandSize() == 5 && GetHandSize() < 5)
-            StartCoroutine(PlayerWins());
+            StartCoroutine(React(blackjackUIScript.Result.Player5Cards));
         else if (GetHandSize() == 5 && player.GetHandSize() < 5)
-            StartCoroutine(DealerWins());
+            StartCoroutine(React(blackjackUIScript.Result.Dealer5Cards));
         else if (GetHandValue() > player.GetHandValue())
         {
-            StartCoroutine(DealerWins());
+            StartCoroutine(React(blackjackUIScript.Result.DealerWins));
         }
         else if (player.GetHandValue() > GetHandValue())
         {
-            StartCoroutine(PlayerWins());
+            StartCoroutine(React(blackjackUIScript.Result.PlayerWins));
         }
         else
-            StartCoroutine(Push());
+            StartCoroutine(React(blackjackUIScript.Result.Push));
     }
 
-    private IEnumerator PlayerWins()
+    private IEnumerator React(blackjackUIScript.Result r)
+    {
+        switch (r)
+        {
+            case blackjackUIScript.Result.PlayerWins:
+                anim.CrossFade("godBossSlapHeadAnimation");
+                break;
+            case blackjackUIScript.Result.DealerWins:
+                anim.CrossFade("godBossSnapAnimation");
+                break;
+            case blackjackUIScript.Result.PlayerBlackjack:
+                anim.CrossFade("godBossSlapHeadAnimation");
+                break;
+            case blackjackUIScript.Result.DealerBlackjack:
+                anim.CrossFade("godBossSnapAnimation");
+                break;
+            case blackjackUIScript.Result.PlayerBust:
+                anim.CrossFade("godBossSnapAnimation");
+                break;
+            case blackjackUIScript.Result.DealerBust:
+                anim.CrossFade("godBossSlapHeadAnimation");
+                break;
+            case blackjackUIScript.Result.Player5Cards:
+                anim.CrossFade("godBossSlapHeadAnimation");
+                break;
+            case blackjackUIScript.Result.Dealer5Cards:
+                anim.CrossFade("godBossSnapAnimation");
+                break;
+            case blackjackUIScript.Result.Push:
+                anim.CrossFade("godBossShrugAnimation");
+                break;
+        }
+        StartCoroutine(player.EndHand(r));
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.1f);
+        Idle();
+    }
+
+ /*   private IEnumerator PlayerWins()
     {
         StartCoroutine(player.WinHand());
         anim.CrossFade("godBossSlapHeadAnimation");
@@ -203,6 +258,8 @@ public class dealerScript : MonoBehaviour
         Idle();
     }
 
+   
+
     private IEnumerator Push()
     {
         StartCoroutine(player.Push());
@@ -211,7 +268,7 @@ public class dealerScript : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         Idle();
     }
-
+    */
 
     public void DealCardToPlayer()
     {

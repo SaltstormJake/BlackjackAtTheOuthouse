@@ -21,7 +21,46 @@ public class playerScript : MonoBehaviour
         anim = gameObject.GetComponent<Animation>();
     }
 
-    public IEnumerator WinHand()
+    public IEnumerator EndHand(blackjackUIScript.Result r)
+    {
+        ToggleTableLean();
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        switch (r)
+        {
+            case blackjackUIScript.Result.PlayerWins:
+                betAmount = betAmount;
+                break;
+            case blackjackUIScript.Result.DealerWins:
+                betAmount = -betAmount;
+                break;
+            case blackjackUIScript.Result.PlayerBlackjack:
+                betAmount = betAmount * 2;
+                break;
+            case blackjackUIScript.Result.DealerBlackjack:
+                betAmount = -betAmount;
+                break;
+            case blackjackUIScript.Result.PlayerBust:
+                betAmount = -betAmount;
+                break;
+            case blackjackUIScript.Result.DealerBust:
+                betAmount = betAmount;
+                break;
+            case blackjackUIScript.Result.Player5Cards:
+                betAmount = betAmount * 2;
+                break;
+            case blackjackUIScript.Result.Dealer5Cards:
+                betAmount = -betAmount;
+                break;
+            case blackjackUIScript.Result.Push:
+                betAmount = 0;
+                break;
+        }
+        results.ShowResults(r, betAmount);
+        UI.ChangeFunds(betAmount);
+    }
+
+ /*   public IEnumerator WinHand()
     {
         ToggleTableLean();
         while (anim.isPlaying)
@@ -46,7 +85,7 @@ public class playerScript : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         results.Push();
     }
-
+    */
     // Start is called before the first frame update
     void Start()
     {
