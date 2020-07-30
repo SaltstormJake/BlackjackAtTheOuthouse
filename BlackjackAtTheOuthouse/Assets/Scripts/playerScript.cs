@@ -15,6 +15,8 @@ public class playerScript : MonoBehaviour
 
     private int betAmount = 0;
 
+    public bool insurance = false;
+
     private void Awake()
     {
         hand = new List<GameObject>();
@@ -24,68 +26,52 @@ public class playerScript : MonoBehaviour
     public IEnumerator EndHand(blackjackUIScript.Result r)
     {
         ToggleTableLean();
+
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
+        int winnings = 0;
         switch (r)
         {
             case blackjackUIScript.Result.PlayerWins:
-                betAmount = betAmount;
+                winnings = (int)(betAmount * 1.5);
                 break;
             case blackjackUIScript.Result.DealerWins:
-                betAmount = -betAmount;
+                //no winnings
                 break;
             case blackjackUIScript.Result.PlayerBlackjack:
-                betAmount = betAmount * 2;
+                winnings = betAmount * 3;
                 break;
             case blackjackUIScript.Result.DealerBlackjack:
-                betAmount = -betAmount;
+                if (insurance)
+                    winnings = betAmount;
+                //no winnings otherwise
+                break;
+            case blackjackUIScript.Result.BothHaveBlackjack:
+                if (insurance)
+                    winnings = betAmount * 4;
+                else
+                    winnings = betAmount;
                 break;
             case blackjackUIScript.Result.PlayerBust:
-                betAmount = -betAmount;
+                //no winnings
                 break;
             case blackjackUIScript.Result.DealerBust:
-                betAmount = betAmount;
+                winnings = (int)(betAmount * 1.5);
                 break;
             case blackjackUIScript.Result.Player5Cards:
-                betAmount = betAmount * 2;
+                winnings = betAmount * 3;
                 break;
             case blackjackUIScript.Result.Dealer5Cards:
-                betAmount = -betAmount;
+                //no winnings
                 break;
             case blackjackUIScript.Result.Push:
-                betAmount = 0;
+                winnings = betAmount;
                 break;
         }
-        results.ShowResults(r, betAmount);
-        UI.ChangeFunds(betAmount);
+        results.ShowResults(r, winnings);
+        UI.ChangeFunds(winnings);
     }
 
- /*   public IEnumerator WinHand()
-    {
-        ToggleTableLean();
-        while (anim.isPlaying)
-            yield return new WaitForSeconds(0.01f);
-        results.Win(betAmount);
-        UI.ChangeFunds(betAmount);
-    }
-
-    public IEnumerator LoseHand()
-    {
-        ToggleTableLean();
-        while (anim.isPlaying)
-            yield return new WaitForSeconds(0.01f);
-        results.Lose(betAmount);
-        UI.ChangeFunds(-betAmount);
-    }
-
-    public IEnumerator Push()
-    {
-        ToggleTableLean();
-        while (anim.isPlaying)
-            yield return new WaitForSeconds(0.01f);
-        results.Push();
-    }
-    */
     // Start is called before the first frame update
     void Start()
     {
@@ -184,5 +170,15 @@ public class playerScript : MonoBehaviour
     public void SetBetAmount(int x)
     {
         betAmount = x;
+    }
+
+    public bool GetInsurance()
+    {
+        return insurance;
+    }
+
+    public void SetInsurance(bool set)
+    {
+        insurance = set;
     }
 }

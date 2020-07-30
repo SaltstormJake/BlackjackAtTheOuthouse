@@ -5,12 +5,6 @@ using UnityEngine.UI;
 public class resultsScreenScript : MonoBehaviour
 {
     [SerializeField] Text resultText;
-    [SerializeField] Text resultTextNumber;
-    [SerializeField] GameObject winText;
-    [SerializeField] GameObject loseText;
-    [SerializeField] GameObject pushText;
-    [SerializeField] Text winNumber;
-    [SerializeField] Text loseNumber;
     [SerializeField] Button dealAgainButton;
     [SerializeField] Button quitButton;
 
@@ -47,35 +41,42 @@ public class resultsScreenScript : MonoBehaviour
         switch (r)
         {
             case (blackjackUIScript.Result.PlayerWins):
-                resultText.text = "Win: +$";
+                resultText.text = "You win the hand, " + UI.GetPlayerHandValue() + " to the dealer's " + UI.GetDealerHandValue() + ". Winnings: $" + amount.ToString() + ".";
                 break;
             case (blackjackUIScript.Result.DealerWins):
-                resultText.text = "Lose: -$";
+                resultText.text = "The dealer wins the hand, " + UI.GetDealerHandValue() + " to your " + UI.GetPlayerHandValue() + ".";
                 break;
             case (blackjackUIScript.Result.PlayerBlackjack):
-                resultText.text = "Blackjack: +$";
+                resultText.text = "You win with a Natural Blackjack. Winnings: $" + amount.ToString() + ".";
                 break;
             case (blackjackUIScript.Result.DealerBlackjack):
-                resultText.text = "Dealer Blackjack: -$";
+                if (UI.GetPlayerInsurance())
+                    resultText.text = "The dealer has a blackjack. Since you took insurance, you break even this hand. Winnings: $" + amount.ToString() + ".";
+                else
+                    resultText.text = "The dealer wins the hand with a Blackjack.";
                 break;
             case (blackjackUIScript.Result.PlayerBust):
-                resultText.text = "Bust: -$";
+                resultText.text = "You bust with a " + UI.GetPlayerHandValue() + ".";
                 break;
             case (blackjackUIScript.Result.DealerBust):
-                resultText.text = "Dealer Bust: +$";
+                resultText.text = "The dealer busts with a " + UI.GetDealerHandValue() + ".";
                 break;
             case (blackjackUIScript.Result.Player5Cards):
-                resultText.text = "Player has 5 cards: +$";
+                resultText.text = "You win with a 5 Card Charlie. Winnings: $" + amount.ToString() + ".";
                 break;
             case (blackjackUIScript.Result.Dealer5Cards):
-                resultText.text = "Dealer has 5 cards: -$";
+                resultText.text = "The dealer wins with a 5 Card Charlie. Winnings: $" + amount.ToString() + ".";
                 break;
             case (blackjackUIScript.Result.Push):
-                resultText.text = "Push. +$";
+                resultText.text = "The hand is a tie. No winnings are awarded.";
+                break;
+            case (blackjackUIScript.Result.BothHaveBlackjack):
+                if (UI.GetPlayerInsurance())
+                    resultText.text = "The hand is a tie. No warnings would be awarded, but you took insurance. Winnings: $" + amount.ToString() + ".";
+                else
+                    resultText.text = "The hand is a tie. No winnings are awarded.";
                 break;
         }
-
-        resultTextNumber.text = Mathf.Abs(amount).ToString();
         dealAgainButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
 
@@ -87,9 +88,6 @@ public class resultsScreenScript : MonoBehaviour
     void DisableAll()
     {
         resultText.gameObject.SetActive(false);
-        winText.SetActive(false);
-        loseText.SetActive(false);
-        pushText.SetActive(false);
         dealAgainButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
 

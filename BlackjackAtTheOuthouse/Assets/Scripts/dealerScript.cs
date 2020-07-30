@@ -23,8 +23,6 @@ public class dealerScript : MonoBehaviour
     private List<GameObject> hand;
     private int handValue;
 
-    private bool firstDeal;
-
     private void Awake()
     {
         anim = gameObject.GetComponent<Animation>();
@@ -76,6 +74,7 @@ public class dealerScript : MonoBehaviour
 
     public IEnumerator Deal()
     {
+        player.SetInsurance(false);
         anim.CrossFade("godBossResetArmsAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
@@ -94,7 +93,14 @@ public class dealerScript : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         DealCardToSelfFaceDown();
         yield return new WaitForSeconds(1.5f);
-        if (player.GetHandValue() == 21 || GetHandValue() == 21)
+        if(hand[0].GetComponent<cardScript>().GetValue() == 11 && UI.GetFunds() >= (int)(player.GetBetAmount() * 1.5)) //gives the player the option to purchase insurance
+        {
+            UI.SetInsurance(true);
+            UI.SetHitAndStand(true);
+            if (UI.GetFunds() >= player.GetBetAmount() * 2)
+                UI.SetDoubleDown(true);
+        }
+        else if (player.GetHandValue() == 21 || GetHandValue() == 21)
             StartCoroutine(Blackjack());
         else
         {
@@ -106,7 +112,6 @@ public class dealerScript : MonoBehaviour
 
     public IEnumerator Hit()
     {
-        Debug.Log(player.GetHandSize());
         DealCardToPlayer();
         yield return new WaitForSeconds(1.5f);
         if (player.GetHandValue() > 21)
@@ -122,6 +127,7 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(Stand());
         else
             UI.SetHitAndStand(true);
+        Debug.Log(player.GetHandSize());
     }
 
     public IEnumerator Stand()
@@ -137,10 +143,34 @@ public class dealerScript : MonoBehaviour
             if (GetHandValue() > 21)
                 CheckAces();
         }
+        if(GetHandValue() == 17 && hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11) != null)
+        {
+            DealCardToSelf();
+            yield return new WaitForSeconds(1.0f);
+        }
         if (GetHandValue() > 21)
             StartCoroutine(React(blackjackUIScript.Result.DealerBust));
         else
             StartCoroutine(EvaluateHands());
+    }
+
+    public IEnumerator Insurance()
+    {
+        player.SetInsurance(true);
+        cardScript script = hand[1].GetComponent<cardScript>();
+        if(script.GetValue() == 10)
+        {
+            UI.SetHitAndStand(false);
+            UI.SetDoubleDown(false);
+            StartCoroutine(script.Flip());
+            StartCoroutine(script.RaiseAndLowerCard());
+            yield return new WaitForSeconds(1.5f);
+            StartCoroutine(EvaluateHands());
+        }
+        else if(player.GetHandValue() == 21)
+        {
+            StartCoroutine(Stand());
+        }
     }
 
     private IEnumerator Blackjack()
@@ -154,7 +184,7 @@ public class dealerScript : MonoBehaviour
         else if (GetHandValue() > player.GetHandValue())
             StartCoroutine(React(blackjackUIScript.Result.DealerBlackjack));
         else
-            StartCoroutine(React(blackjackUIScript.Result.Push));
+            StartCoroutine(React(blackjackUIScript.Result.BothHaveBlackjack));
         
     }
 
@@ -186,7 +216,9 @@ public class dealerScript : MonoBehaviour
     private IEnumerator EvaluateHands()
     {
         yield return new WaitForSeconds(1.5f);
-        if (player.GetHandSize() == 5 && GetHandSize() < 5)
+        if (GetHandValue() == 21)
+            StartCoroutine(React(blackjackUIScript.Result.DealerBlackjack));
+        else if (player.GetHandSize() == 5 && GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Player5Cards));
         else if (GetHandSize() == 5 && player.GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Dealer5Cards));
@@ -216,7 +248,16 @@ public class dealerScript : MonoBehaviour
                 anim.CrossFade("godBossSlapHeadAnimation");
                 break;
             case blackjackUIScript.Result.DealerBlackjack:
-                anim.CrossFade("godBossSnapAnimation");
+                if (player.GetInsurance())
+                    anim.CrossFade("godBossShrugAnimation");
+                else
+                    anim.CrossFade("godBossSnapAnimation");
+                break;
+            case blackjackUIScript.Result.BothHaveBlackjack:
+                if (player.GetInsurance())
+                    anim.CrossFade("godBossSlapHeadAnimation");
+                else
+                    anim.CrossFade("godBossShrugAnimation");
                 break;
             case blackjackUIScript.Result.PlayerBust:
                 anim.CrossFade("godBossSnapAnimation");
@@ -239,36 +280,6 @@ public class dealerScript : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         Idle();
     }
-
- /*   private IEnumerator PlayerWins()
-    {
-        StartCoroutine(player.WinHand());
-        anim.CrossFade("godBossSlapHeadAnimation");
-        while (anim.isPlaying)
-            yield return new WaitForSeconds(0.01f);
-        Idle();
-    }
-
-    private IEnumerator DealerWins()
-    {
-        StartCoroutine(player.LoseHand());
-        anim.CrossFade("godBossSnapAnimation");
-        while (anim.isPlaying)
-            yield return new WaitForSeconds(0.01f);
-        Idle();
-    }
-
-   
-
-    private IEnumerator Push()
-    {
-        StartCoroutine(player.Push());
-        anim.CrossFade("godBossShrugAnimation");
-        while (anim.isPlaying)
-            yield return new WaitForSeconds(0.01f);
-        Idle();
-    }
-    */
 
     public void DealCardToPlayer()
     {

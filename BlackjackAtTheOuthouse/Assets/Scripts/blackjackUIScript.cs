@@ -22,7 +22,7 @@ public class blackjackUIScript : MonoBehaviour
     int funds = 1000;
     int betAmount;
 
-    public enum Result { PlayerWins, DealerWins, PlayerBlackjack, DealerBlackjack, PlayerBust, DealerBust, Player5Cards, Dealer5Cards, Push };
+    public enum Result { PlayerWins, DealerWins, PlayerBlackjack, DealerBlackjack, BothHaveBlackjack, PlayerBust, DealerBust, Player5Cards, Dealer5Cards, Push };
 
     private void Awake()
     {
@@ -106,6 +106,11 @@ public class blackjackUIScript : MonoBehaviour
     {
         funds += i;
         fundsTextNumber.text = funds.ToString();
+        if(funds <= 0)
+        {
+            funds = 0;
+            StartCoroutine(dealer.OutOfMoney());
+        }
     }
 
     public int GetFunds()
@@ -120,6 +125,7 @@ public class blackjackUIScript : MonoBehaviour
         SetDeal(false);
         StartCoroutine(dealer.Deal());
         player.ToggleTableLean();
+        ChangeFunds(-(int)betSlider.value * 50);
     }
 
     public void OnDealAgainClick(int bet)
@@ -128,12 +134,14 @@ public class blackjackUIScript : MonoBehaviour
         player.SetBetAmount(bet);
         StartCoroutine(dealer.Deal());
         player.ToggleTableLean();
+        ChangeFunds(-bet);
     }
 
     private void OnHitClick()
     {
         StartCoroutine(dealer.Hit());
         SetHitAndStand(false);
+        SetInsurance(false);
         SetDoubleDown(false);
     }
 
@@ -141,6 +149,7 @@ public class blackjackUIScript : MonoBehaviour
     {
         StartCoroutine(dealer.Stand());
         SetHitAndStand(false);
+        SetInsurance(false);
         SetDoubleDown(false);
     }
 
@@ -158,7 +167,24 @@ public class blackjackUIScript : MonoBehaviour
     
     private void OnInsuranceClick()
     {
+        StartCoroutine(dealer.Insurance());
+        ChangeFunds(-(int)(player.GetBetAmount() / 2));
+        SetInsurance(false);
+    }
 
+    public int GetDealerHandValue()
+    {
+        return dealer.GetHandValue();
+    }
+
+    public int GetPlayerHandValue()
+    {
+        return player.GetHandValue();
+    }
+
+    public bool GetPlayerInsurance()
+    {
+        return player.GetInsurance();
     }
 
 }
