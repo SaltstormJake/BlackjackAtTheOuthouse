@@ -10,6 +10,7 @@ public class cardScript : MonoBehaviour
     [SerializeField] private Face face;
     [SerializeField] private Suit suit;
     [SerializeField] private int value;
+    [SerializeField] AudioClip hittingTableSound;
 
     private bool isFaceUp;
     
@@ -99,6 +100,7 @@ public class cardScript : MonoBehaviour
             yield return null;
         }
         transform.position = destination;
+        //AudioSource.PlayClipAtPoint(hittingTableSound, transform.position, 1.0f);
     }
 
     public void changeValue(int i)

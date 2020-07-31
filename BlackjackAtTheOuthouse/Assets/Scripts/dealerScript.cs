@@ -127,7 +127,7 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(Stand());
         else
             UI.SetHitAndStand(true);
-        Debug.Log(player.GetHandSize());
+        //Debug.Log(player.GetHandSize());
     }
 
     public IEnumerator Stand()
@@ -216,7 +216,7 @@ public class dealerScript : MonoBehaviour
     private IEnumerator EvaluateHands()
     {
         yield return new WaitForSeconds(1.5f);
-        if (GetHandValue() == 21)
+        if (GetHandValue() == 21 && GetHandSize() == 2)
             StartCoroutine(React(blackjackUIScript.Result.DealerBlackjack));
         else if (player.GetHandSize() == 5 && GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Player5Cards));
@@ -275,10 +275,19 @@ public class dealerScript : MonoBehaviour
                 anim.CrossFade("godBossShrugAnimation");
                 break;
         }
-        StartCoroutine(player.EndHand(r));
+        player.ToggleTableLean();
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.1f);
-        Idle();
+        if (UI.GetFunds() <= 0)
+        {
+            StartCoroutine(player.EndHand(r, false));
+            StartCoroutine(OutOfMoney());
+        }
+        else
+        {
+            StartCoroutine(player.EndHand(r, true));
+            Idle();
+        }
     }
 
     public void DealCardToPlayer()
@@ -387,6 +396,19 @@ public class dealerScript : MonoBehaviour
             cardScript script = g.GetComponent<cardScript>();
             Debug.Log(script.GetFace() + " of " + script.GetSuit() + "(" + script.GetValue() + ")");
         }
+    }
+
+    public IEnumerator OutOfMoney()
+    {
+        yield return new WaitForSeconds(1.0f);
+        results.DisableText();
+        anim.Play("godBossScratchHeadAnimation");
+        voice.clip = voiceLines[4];
+        voice.Play();
+        while (voice.isPlaying || anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        UI.ChangeFunds(1000);
+        results.SetButtons(true, player.GetBetAmount());
     }
 }
 

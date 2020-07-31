@@ -8,6 +8,7 @@ public class mainMenuScript : MonoBehaviour
     private GameObject[] menuObjects;
 
     [SerializeField] private Button playButton;
+    [SerializeField] private Button optionsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
@@ -15,12 +16,12 @@ public class mainMenuScript : MonoBehaviour
     void Awake()
     {
         menuObjects = GameObject.FindGameObjectsWithTag("menuOnly");
-
     }
     // Start is called before the first frame update
     void Start()
     {
         playButton.onClick.AddListener(OnClickPlay);
+        optionsButton.onClick.AddListener(OnClickOptions);
         creditsButton.onClick.AddListener(OnClickCredits);
         quitButton.onClick.AddListener(OnClickCredits);
     }
@@ -38,6 +39,11 @@ public class mainMenuScript : MonoBehaviour
         player.WalkUpStairs();
     }
 
+    void OnClickOptions()
+    {
+
+    }
+
     void OnClickCredits()
     {
 
@@ -45,6 +51,6 @@ public class mainMenuScript : MonoBehaviour
 
     void OnClickQuit()
     {
-
+        Application.Quit();
     }
 }

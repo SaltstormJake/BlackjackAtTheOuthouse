@@ -106,11 +106,6 @@ public class blackjackUIScript : MonoBehaviour
     {
         funds += i;
         fundsTextNumber.text = funds.ToString();
-        if(funds <= 0)
-        {
-            funds = 0;
-            StartCoroutine(dealer.OutOfMoney());
-        }
     }
 
     public int GetFunds()
@@ -155,6 +150,7 @@ public class blackjackUIScript : MonoBehaviour
 
     private void OnDoubleDownClick()
     {
+        ChangeFunds(-player.GetBetAmount());
         StartCoroutine(dealer.DoubleDown());
         SetHitAndStand(false);
         SetDoubleDown(false);

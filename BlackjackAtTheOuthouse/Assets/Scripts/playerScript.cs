@@ -23,9 +23,8 @@ public class playerScript : MonoBehaviour
         anim = gameObject.GetComponent<Animation>();
     }
 
-    public IEnumerator EndHand(blackjackUIScript.Result r)
+    public IEnumerator EndHand(blackjackUIScript.Result r, bool buttons)
     {
-        ToggleTableLean();
 
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
@@ -69,6 +68,8 @@ public class playerScript : MonoBehaviour
                 break;
         }
         results.ShowResults(r, winnings);
+        if(buttons)
+            results.SetButtons(true, winnings);
         UI.ChangeFunds(winnings);
     }
 

@@ -51,9 +51,9 @@ public class resultsScreenScript : MonoBehaviour
                 break;
             case (blackjackUIScript.Result.DealerBlackjack):
                 if (UI.GetPlayerInsurance())
-                    resultText.text = "The dealer has a blackjack. Since you took insurance, you break even this hand. Winnings: $" + amount.ToString() + ".";
+                    resultText.text = "The dealer has a blackjack. Since you took insurance, you break even this hand.";
                 else
-                    resultText.text = "The dealer wins the hand with a Blackjack.";
+                    resultText.text = "The dealer wins the hand with a blackjack.";
                 break;
             case (blackjackUIScript.Result.PlayerBust):
                 resultText.text = "You bust with a " + UI.GetPlayerHandValue() + ".";
@@ -65,24 +65,33 @@ public class resultsScreenScript : MonoBehaviour
                 resultText.text = "You win with a 5 Card Charlie. Winnings: $" + amount.ToString() + ".";
                 break;
             case (blackjackUIScript.Result.Dealer5Cards):
-                resultText.text = "The dealer wins with a 5 Card Charlie. Winnings: $" + amount.ToString() + ".";
+                resultText.text = "The dealer wins with a 5 Card Charlie.";
                 break;
             case (blackjackUIScript.Result.Push):
-                resultText.text = "The hand is a tie. No winnings are awarded.";
+                resultText.text = "The hand is a tie. You receive your bet back.";
                 break;
             case (blackjackUIScript.Result.BothHaveBlackjack):
                 if (UI.GetPlayerInsurance())
-                    resultText.text = "The hand is a tie. No warnings would be awarded, but you took insurance. Winnings: $" + amount.ToString() + ".";
+                    resultText.text = "The hand is a tie. No winnings would be awarded, but you took insurance. Winnings: $" + amount.ToString() + ".";
                 else
                     resultText.text = "The hand is a tie. No winnings are awarded.";
                 break;
         }
-        dealAgainButton.gameObject.SetActive(true);
-        quitButton.gameObject.SetActive(true);
+    }
 
-        betSlider.gameObject.SetActive(true);
+    public void SetButtons(bool enabled, int amount)
+    {
+        dealAgainButton.gameObject.SetActive(enabled);
+        quitButton.gameObject.SetActive(enabled);
+
+        betSlider.gameObject.SetActive(enabled);
         betSlider.maxValue = (UI.GetFunds() + amount) / 50;
-        betText.SetActive(true);
+        betText.SetActive(enabled);
+    }
+
+    public void DisableText()
+    {
+        resultText.gameObject.SetActive(false);
     }
 
     void DisableAll()

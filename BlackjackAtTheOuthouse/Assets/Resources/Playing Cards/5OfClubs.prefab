@@ -97,4 +97,4 @@ MonoBehaviour:
   face: 4
   suit: 3
   value: 5
-  testKey: 0
+  hittingTableSound: {fileID: 8300000, guid: 17f8958f2f85a7a4bb88a44283f0eba9, type: 3}
