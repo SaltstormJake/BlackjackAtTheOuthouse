@@ -6,11 +6,13 @@ public class candleScript : MonoBehaviour
 {
     private GameObject candlelight;
     private AudioSource sound;
+    private Animation anim;
     [SerializeField] AudioClip whoosh;
     private void Awake()
     {
         candlelight = transform.GetChild(3).gameObject;
         sound = gameObject.GetComponent<AudioSource>();
+        anim = gameObject.GetComponent<Animation>();
     }
     // Start is called before the first frame update
     void Start()
@@ -26,7 +28,6 @@ public class candleScript : MonoBehaviour
 
     public void EnableLight()
     {
-        //put light turning on sound here
         candlelight.SetActive(true);
         sound.clip = whoosh;
         sound.Play();
@@ -36,5 +37,10 @@ public class candleScript : MonoBehaviour
     {
         //put light turning off sound here
         candlelight.SetActive(false);
+    }
+
+    public void KnockOver()
+    {
+        anim.Play("candleKnockedOverAnimation");
     }
 }

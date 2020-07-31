@@ -23,7 +23,7 @@ public class playerScript : MonoBehaviour
         anim = gameObject.GetComponent<Animation>();
     }
 
-    public IEnumerator EndHand(blackjackUIScript.Result r, bool buttons)
+    public IEnumerator EndHand(blackjackUIScript.Result r)
     {
 
         while (anim.isPlaying)
@@ -68,8 +68,6 @@ public class playerScript : MonoBehaviour
                 break;
         }
         results.ShowResults(r, winnings);
-        if(buttons)
-            results.SetButtons(true, winnings);
         UI.ChangeFunds(winnings);
     }
 
@@ -181,5 +179,12 @@ public class playerScript : MonoBehaviour
     public void SetInsurance(bool set)
     {
         insurance = set;
+    }
+
+    public IEnumerator QuitGame()
+    {
+        anim.Play("playerLeaveShackAnimation");
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
     }
 }

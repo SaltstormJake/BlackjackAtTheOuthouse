@@ -6,6 +6,7 @@ public class musicScript : MonoBehaviour
 {
     AudioSource sound;
     [SerializeField] AudioClip music;
+    [SerializeField] AudioClip recordScratch;
     [SerializeField] KeyCode testKey;
 
     private void Awake()
@@ -28,6 +29,7 @@ public class musicScript : MonoBehaviour
 
     public void PlayMusic()
     {
+        sound.clip = music;
         sound.Play();
         sound.loop = true;
     }
@@ -38,5 +40,13 @@ public class musicScript : MonoBehaviour
             sound.Pause();
         else
             sound.UnPause();
+    }
+
+    public void RecordScratch()
+    {
+        sound.Stop();
+        sound.loop = false;
+        sound.clip = recordScratch;
+        sound.Play();
     }
 }

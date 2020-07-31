@@ -85,6 +85,7 @@ public class dealerScript : MonoBehaviour
         anim.Play("godBossPointToDeckAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0.5f);
         DealCardToPlayer();
         yield return new WaitForSeconds(1.0f);
         DealCardToPlayer();
@@ -136,6 +137,8 @@ public class dealerScript : MonoBehaviour
         StartCoroutine(script.Flip());
         StartCoroutine(script.RaiseAndLowerCard());
         yield return new WaitForSeconds(1.5f);
+        if (hand[0].GetComponent<cardScript>().GetValue() == 11 && hand[1].GetComponent<cardScript>().GetValue() == 11)
+            CheckAces();
         while(GetHandValue() < 17 && GetHandSize() < 5)
         {
             DealCardToSelf();
@@ -278,16 +281,12 @@ public class dealerScript : MonoBehaviour
         player.ToggleTableLean();
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.1f);
+        StartCoroutine(player.EndHand(r));
+        yield return new WaitForSeconds(1.0f);
         if (UI.GetFunds() <= 0)
-        {
-            StartCoroutine(player.EndHand(r, false));
-            StartCoroutine(OutOfMoney());
-        }
-        else
-        {
-            StartCoroutine(player.EndHand(r, true));
-            Idle();
-        }
+            yield return StartCoroutine(OutOfMoney());
+        results.SetButtons(true, player.GetBetAmount());
+        Idle();
     }
 
     public void DealCardToPlayer()
@@ -402,13 +401,56 @@ public class dealerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(1.0f);
         results.DisableText();
+        music.RecordScratch();
+        yield return new WaitForSeconds(1.0f);
         anim.Play("godBossScratchHeadAnimation");
         voice.clip = voiceLines[4];
         voice.Play();
         while (voice.isPlaying || anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        UI.ChangeFunds(1000);
-        results.SetButtons(true, player.GetBetAmount());
+        voice.clip = voiceLines[5];
+        voice.Play();
+        anim.Play("godBossPointUpAnimation");
+        while (voice.isPlaying || anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        anim.Play("godBossSnapAnimationMoreMoney");
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        //UI.ChangeFunds(500);
+        //results.SetButtons(true, player.GetBetAmount());
+        results.SetSliderMax(200);
+        music.PlayMusic();
+    }
+
+    private void ChangeUIFunds(int amount) //used only for the out of money animation
+    {
+        UI.ChangeFunds(amount);
+    }
+
+    public IEnumerator QuitGame()
+    {
+        yield return new WaitForSeconds(1.0f);
+        voice.clip = voiceLines[6];
+        voice.Play();
+        yield return new WaitForSeconds(6.0f);
+        anim.Play("godBossTripAnimation");
+        while (voice.isPlaying || anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
+        AudioSource volume = music.gameObject.GetComponent<AudioSource>();
+        float timer = 0;
+        while(timer < 10)
+        {
+            timer += Time.deltaTime;
+            volume.volume = Mathf.Lerp(1, 0, timer / 10);
+            //volume.volume -= 0.01f;
+            // yield return new WaitForSeconds(0.1f);
+            yield return null;
+        }
+    }
+
+    private void KnockOverCandle()
+    {
+        candle.KnockOver();
     }
 }
 

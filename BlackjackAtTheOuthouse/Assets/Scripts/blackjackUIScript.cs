@@ -19,7 +19,7 @@ public class blackjackUIScript : MonoBehaviour
     [SerializeField] Text fundsTextNumber;
     [SerializeField] dealerScript dealer;
     [SerializeField] playerScript player;
-    int funds = 1000;
+    int funds = 500;
     int betAmount;
 
     public enum Result { PlayerWins, DealerWins, PlayerBlackjack, DealerBlackjack, BothHaveBlackjack, PlayerBust, DealerBust, Player5Cards, Dealer5Cards, Push };
@@ -71,8 +71,8 @@ public class blackjackUIScript : MonoBehaviour
 
     public void SetFunds(bool enabled)
     {
-        fundsText.SetActive(true);
-        fundsTextNumber.gameObject.SetActive(true);
+        fundsText.SetActive(enabled);
+        fundsTextNumber.gameObject.SetActive(enabled);
     }
 
     public void SetHitAndStand(bool enabled)
@@ -183,4 +183,10 @@ public class blackjackUIScript : MonoBehaviour
         return player.GetInsurance();
     }
 
+    public void QuitGame()
+    {
+        StartCoroutine(player.QuitGame());
+        StartCoroutine(dealer.QuitGame());
+        SetFunds(false);
+    }
 }

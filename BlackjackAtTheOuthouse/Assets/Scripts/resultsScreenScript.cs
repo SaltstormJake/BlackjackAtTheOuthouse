@@ -31,7 +31,10 @@ public class resultsScreenScript : MonoBehaviour
     {
         if (betTextNumber.IsActive())
         {
-            betTextNumber.text = (betSlider.value * 50).ToString();
+            if (UI.GetFunds() < 50)
+                betTextNumber.text = (betSlider.value).ToString();
+            else
+                betTextNumber.text = (betSlider.value * 50).ToString();
         }
     }
 
@@ -59,7 +62,7 @@ public class resultsScreenScript : MonoBehaviour
                 resultText.text = "You bust with a " + UI.GetPlayerHandValue() + ".";
                 break;
             case (blackjackUIScript.Result.DealerBust):
-                resultText.text = "The dealer busts with a " + UI.GetDealerHandValue() + ".";
+                resultText.text = "The dealer busts with a " + UI.GetDealerHandValue() + ". Winnings: $" + amount.ToString() + ".";
                 break;
             case (blackjackUIScript.Result.Player5Cards):
                 resultText.text = "You win with a 5 Card Charlie. Winnings: $" + amount.ToString() + ".";
@@ -85,7 +88,14 @@ public class resultsScreenScript : MonoBehaviour
         quitButton.gameObject.SetActive(enabled);
 
         betSlider.gameObject.SetActive(enabled);
-        betSlider.maxValue = (UI.GetFunds() + amount) / 50;
+        if (UI.GetFunds() < 50)
+        {
+            betSlider.maxValue = UI.GetFunds();
+        }
+        else
+        {
+            betSlider.maxValue = UI.GetFunds() / 50;
+        }
         betText.SetActive(enabled);
     }
 
@@ -106,12 +116,21 @@ public class resultsScreenScript : MonoBehaviour
  
     void DealButtonOnClick()
     {
-        UI.OnDealAgainClick((int)betSlider.value * 50);
+        if (UI.GetFunds() < 50)
+            UI.OnDealAgainClick((int)betSlider.value);
+        else
+            UI.OnDealAgainClick((int)betSlider.value * 50);
         DisableAll();
     }
 
     void QuitButtonOnClick()
     {
-        Application.Quit();
+        UI.QuitGame();
+        DisableAll();
+    }
+
+    public void SetSliderMax(int max)
+    {
+        betSlider.maxValue = max / 50;
     }
 }

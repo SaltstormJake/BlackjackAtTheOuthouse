@@ -58,7 +58,7 @@ public class deckScript : MonoBehaviour
 
     public void Shuffle()
     {
-        for(int i = 0; i < iterator; i++)
+        for(int i = 0; i <= iterator; i++)
         {
             int j = Random.Range(0, iterator);
             GameObject temp = Deck[j];
