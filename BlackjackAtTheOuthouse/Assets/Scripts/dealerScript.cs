@@ -65,9 +65,12 @@ public class dealerScript : MonoBehaviour
         voice.clip = voiceLines[2];
         voice.Play();
         music.PlayMusic();
+        anim.Play("godBossIntroAnimation");
         deck.Shuffle();
-        while (voice.isPlaying)
+        while (anim.isPlaying || voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
+        //while (voice.isPlaying)
+        //    yield return new WaitForSeconds(0.01f);
         Idle();
         UI.SetDeal(true);
     }
@@ -283,10 +286,23 @@ public class dealerScript : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         StartCoroutine(player.EndHand(r));
         yield return new WaitForSeconds(1.0f);
+        float banterChance = Random.Range(0f, 1f);
+        Debug.Log(banterChance);
         if (UI.GetFunds() <= 0)
             yield return StartCoroutine(OutOfMoney());
+        else if (banterChance > 0.9f)
+            yield return StartCoroutine(SayBanter());
         results.SetButtons(true, player.GetBetAmount());
         Idle();
+    }
+
+    private IEnumerator SayBanter()
+    {
+        results.DisableText();
+        voice.clip = voiceLines[3];
+        voice.Play();
+        while (voice.isPlaying)
+            yield return new WaitForSeconds(0.01f);
     }
 
     public void DealCardToPlayer()
@@ -399,7 +415,7 @@ public class dealerScript : MonoBehaviour
 
     public IEnumerator OutOfMoney()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.5f);
         results.DisableText();
         music.RecordScratch();
         yield return new WaitForSeconds(1.0f);
@@ -436,21 +452,18 @@ public class dealerScript : MonoBehaviour
         anim.Play("godBossTripAnimation");
         while (voice.isPlaying || anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        AudioSource volume = music.gameObject.GetComponent<AudioSource>();
-        float timer = 0;
-        while(timer < 10)
-        {
-            timer += Time.deltaTime;
-            volume.volume = Mathf.Lerp(1, 0, timer / 10);
-            //volume.volume -= 0.01f;
-            // yield return new WaitForSeconds(0.1f);
-            yield return null;
-        }
+        StartCoroutine(music.FadeOut(10));
     }
 
     private void KnockOverCandle()
     {
         candle.KnockOver();
+    }
+
+    private void SayLine(AudioClip sound)
+    {
+        voice.clip = sound;
+        voice.Play();
     }
 }
 

@@ -49,4 +49,16 @@ public class musicScript : MonoBehaviour
         sound.clip = recordScratch;
         sound.Play();
     }
+
+    public IEnumerator FadeOut(float time)
+    {
+        float timer = 0;
+        while (timer < time)
+        {
+            timer += Time.deltaTime;
+            sound.volume = Mathf.Lerp(1, 0, timer / 10);
+            yield return null;
+        }
+        sound.Stop();
+    }
 }

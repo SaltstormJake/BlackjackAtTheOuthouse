@@ -138,6 +138,7 @@ public class blackjackUIScript : MonoBehaviour
         SetHitAndStand(false);
         SetInsurance(false);
         SetDoubleDown(false);
+        SetSplit(false);
     }
 
     private void OnStandClick()
@@ -146,6 +147,7 @@ public class blackjackUIScript : MonoBehaviour
         SetHitAndStand(false);
         SetInsurance(false);
         SetDoubleDown(false);
+        SetSplit(false);
     }
 
     private void OnDoubleDownClick()
@@ -153,7 +155,9 @@ public class blackjackUIScript : MonoBehaviour
         ChangeFunds(-player.GetBetAmount());
         StartCoroutine(dealer.DoubleDown());
         SetHitAndStand(false);
+        SetInsurance(false);
         SetDoubleDown(false);
+        SetSplit(false);
     }
 
     private void OnSplitClick()

@@ -4,7 +4,6 @@ FEATURES:
 Add sound to shuffle and push animations
 Add sound to drawing cards
 Add banter voice lines
-Program the banter to randomly occur
 Touch up UI graphics
 Make new animations for the dealer for different outcomes
 Set a max betting amount
@@ -31,7 +30,6 @@ smoothen transitions, especially the one between pointing at the deck and the de
 
 fix bug that plays idle animation forever when you press the deal button too quickly (?)
 Get a better sound for the card hitting the table (?)
-Fix 5-card rule (?)
 Fix busting when aces are drawn (happens with dealer, might not happen with player) (?)
 fix bug where your money is drained from a 5 card (might not be a bug, wasn't paying attention) (?)
 
