@@ -160,9 +160,10 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(EvaluateHands());
     }
 
-    public IEnumerator Insurance()
+    public IEnumerator Insurance(bool tookInsurance)
     {
-        player.SetInsurance(true);
+        if(tookInsurance)
+            player.SetInsurance(true);
         cardScript script = hand[1].GetComponent<cardScript>();
         if(script.GetValue() == 10)
         {
@@ -245,7 +246,7 @@ public class dealerScript : MonoBehaviour
         switch (r)
         {
             case blackjackUIScript.Result.PlayerWins:
-                anim.CrossFade("godBossSlapHeadAnimation");
+                anim.CrossFade("godBossSighAnimation");
                 break;
             case blackjackUIScript.Result.DealerWins:
                 anim.CrossFade("godBossSnapAnimation");
@@ -298,11 +299,12 @@ public class dealerScript : MonoBehaviour
 
     private IEnumerator SayBanter()
     {
-        results.DisableText();
-        voice.clip = voiceLines[3];
-        voice.Play();
-        while (voice.isPlaying)
-            yield return new WaitForSeconds(0.01f);
+        //results.DisableText();
+        //voice.clip = voiceLines[3];
+        //voice.Play();
+        //while (voice.isPlaying)
+        //    yield return new WaitForSeconds(0.01f);
+        yield return null;
     }
 
     public void DealCardToPlayer()

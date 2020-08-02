@@ -13,6 +13,9 @@ public class blackjackUIScript : MonoBehaviour
     [SerializeField] Button SplitButton;
     [SerializeField] Button InsuranceButton;
     [SerializeField] Slider betSlider;
+    [SerializeField] GameObject Insurance;
+    [SerializeField] Button insuranceYesButton;
+    [SerializeField] Button insuranceNoButton;
     [SerializeField] GameObject betText;
     [SerializeField] Text betTextNumber;
     [SerializeField] GameObject fundsText;
@@ -32,7 +35,8 @@ public class blackjackUIScript : MonoBehaviour
         StandButton.onClick.AddListener(OnStandClick);
         DoubleDownButton.onClick.AddListener(OnDoubleDownClick);
         SplitButton.onClick.AddListener(OnSplitClick);
-        InsuranceButton.onClick.AddListener(OnInsuranceClick);
+        insuranceYesButton.onClick.AddListener(() => OnInsuranceClick(true));
+        insuranceNoButton.onClick.AddListener(() => OnInsuranceClick(false));
     }
 
     // Start is called before the first frame update
@@ -93,7 +97,7 @@ public class blackjackUIScript : MonoBehaviour
 
     public void SetInsurance(bool enabled)
     {
-        InsuranceButton.gameObject.SetActive(enabled);
+        Insurance.SetActive(enabled);
     }
 
     public void SetUI(bool enabled)
@@ -165,12 +169,14 @@ public class blackjackUIScript : MonoBehaviour
 
     }
     
-    private void OnInsuranceClick()
+    private void OnInsuranceClick(bool tookInsurance)
     {
-        StartCoroutine(dealer.Insurance());
-        ChangeFunds(-(int)(player.GetBetAmount() / 2));
+        StartCoroutine(dealer.Insurance(tookInsurance));
+        if(tookInsurance)
+            ChangeFunds(-(int)(player.GetBetAmount() / 2));
         SetInsurance(false);
     }
+
 
     public int GetDealerHandValue()
     {
