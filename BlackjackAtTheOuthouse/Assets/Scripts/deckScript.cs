@@ -4,16 +4,13 @@ using UnityEngine;
 using System.Linq;
 public class deckScript : MonoBehaviour
 {
-    //GameObject[] Deck;
-
-    GameObject[] Deck;
+    [SerializeField] List<GameObject> Deck;
 
     private int iterator;
     private float deckHeight;
     private void Awake()
     {
-        Deck = Resources.LoadAll("Playing Cards", typeof(GameObject)).Cast<GameObject>().ToArray();
-        iterator = Deck.Length - 1;
+        iterator = Deck.Count - 1;
         deckHeight = transform.localScale.y;
     }
 
@@ -70,12 +67,12 @@ public class deckScript : MonoBehaviour
     public void ShuffleAndRefill()
     {
         Shuffle();
-        iterator = Deck.Length - 1;
+        iterator = Deck.Count - 1;
     }
 
     void OutOfCards()
     {
-        Debug.Log("Out of cards. (This shouldn't be possible.");
+        Debug.Log("Out of cards. (This shouldn't be possible.)");
     }
 
     public int GetCardsRemaining()
