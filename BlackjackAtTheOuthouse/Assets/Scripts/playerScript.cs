@@ -7,6 +7,7 @@ public class playerScript : MonoBehaviour
     [SerializeField] dealerScript dealer;
     [SerializeField] blackjackUIScript UI;
     [SerializeField] resultsScreenScript results;
+    [SerializeField] endingScreenScript endingScreen;
 
     private List<GameObject> hand;
     private int handValue;
@@ -15,7 +16,7 @@ public class playerScript : MonoBehaviour
 
     private int betAmount = 0;
 
-    public bool insurance = false;
+    [HideInInspector] public bool insurance = false;
 
     private void Awake()
     {
@@ -186,5 +187,6 @@ public class playerScript : MonoBehaviour
         anim.Play("playerLeaveShackAnimation");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
+        endingScreen.SetScreen(true);
     }
 }

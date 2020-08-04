@@ -14,6 +14,8 @@ public class dealerScript : MonoBehaviour
     [SerializeField] playerScript player;
     [SerializeField] resultsScreenScript results;
 
+    [SerializeField] List<List<AudioClip>> banterLines;
+
     private Animation anim;
     private AudioSource voice;
     private Vector3 playerHandPosition = new Vector3(180, 2, 25);

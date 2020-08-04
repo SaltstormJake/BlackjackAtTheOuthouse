@@ -31,10 +31,7 @@ public class resultsScreenScript : MonoBehaviour
     {
         if (betTextNumber.IsActive())
         {
-            if (UI.GetFunds() < 50)
-                betTextNumber.text = (betSlider.value).ToString();
-            else
-                betTextNumber.text = (betSlider.value * 50).ToString();
+            betTextNumber.text = betSlider.value.ToString();
         }
     }
 
@@ -88,13 +85,13 @@ public class resultsScreenScript : MonoBehaviour
         quitButton.gameObject.SetActive(enabled);
 
         betSlider.gameObject.SetActive(enabled);
-        if (UI.GetFunds() < 50)
+        if (UI.GetFunds() < 100)
         {
             betSlider.maxValue = UI.GetFunds();
         }
         else
         {
-            betSlider.maxValue = UI.GetFunds() / 50;
+            betSlider.maxValue = 100;
         }
         betText.SetActive(enabled);
     }
@@ -116,10 +113,7 @@ public class resultsScreenScript : MonoBehaviour
  
     void DealButtonOnClick()
     {
-        if (UI.GetFunds() < 50)
-            UI.OnDealAgainClick((int)betSlider.value);
-        else
-            UI.OnDealAgainClick((int)betSlider.value * 50);
+        UI.OnDealAgainClick((int)betSlider.value);
         DisableAll();
     }
 
@@ -131,6 +125,6 @@ public class resultsScreenScript : MonoBehaviour
 
     public void SetSliderMax(int max)
     {
-        betSlider.maxValue = max / 50;
+        betSlider.maxValue = max;
     }
 }

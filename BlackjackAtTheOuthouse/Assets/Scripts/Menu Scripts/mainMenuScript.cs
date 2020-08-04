@@ -5,17 +5,21 @@ using UnityEngine.UI;
 
 public class mainMenuScript : MonoBehaviour
 {
-    private GameObject[] menuObjects;
+    private GameObject[] menuElements;
 
     [SerializeField] private Button playButton;
     [SerializeField] private Button optionsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] optionsMenuScript options;
+    [SerializeField] mainMenuCreditsScript credits;
 
     [SerializeField] private playerScript player;
+
+
     void Awake()
     {
-        menuObjects = GameObject.FindGameObjectsWithTag("menuOnly");
+        menuElements = GameObject.FindGameObjectsWithTag("menuOnly");
     }
     // Start is called before the first frame update
     void Start()
@@ -34,23 +38,30 @@ public class mainMenuScript : MonoBehaviour
 
     void OnClickPlay()
     {
-        foreach (GameObject g in menuObjects)
-            g.SetActive(false);
+        SetScreen(false);
         player.WalkUpStairs();
     }
 
     void OnClickOptions()
     {
-
+        SetScreen(false);
+        options.SetScreen(true);
     }
 
     void OnClickCredits()
     {
-
+        SetScreen(false);
+        credits.SetScreen(true);
     }
 
     void OnClickQuit()
     {
         Application.Quit();
+    }
+
+    public void SetScreen(bool enabled)
+    {
+        foreach (GameObject g in menuElements)
+            g.SetActive(enabled);
     }
 }

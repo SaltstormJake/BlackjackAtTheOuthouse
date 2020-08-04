@@ -8,6 +8,9 @@ TagManager:
   - Card
   - menuOnly
   - UIOnly
+  - endingCreditsOnly
+  - mainMenuCreditsOnly
+  - optionsOnly
   layers:
   - Default
   - TransparentFX

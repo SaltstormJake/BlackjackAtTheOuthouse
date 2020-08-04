@@ -4,16 +4,15 @@ FEATURES:
 Add banter voice lines
 Touch up UI graphics
 Make new animations for the dealer for different outcomes
-Set a max betting amount ($100 seems like a good amount)
 Shrink deck as cards are drawn
 Add animation for clearing the table
 add actual flame to candle and flickering to candlelight, flame sound to candle and blown out sound
 Touch up animations
+Clean up code
 
 Add splitting (?)
 Replace the UI results text with voice lines (?)
 
-Make dealer hit on soft 17 (?)
 
 FIXES:
 Fix janky point at deck animation
@@ -28,7 +27,6 @@ fix bug that plays idle animation forever when you press the deal button too qui
 Get a better sound for the card hitting the table (?)
 
 MENU ADDITIONS:
-credits screen
 options menu
 
 OPTIONS:

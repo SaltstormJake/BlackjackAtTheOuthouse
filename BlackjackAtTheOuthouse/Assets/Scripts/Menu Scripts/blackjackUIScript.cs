@@ -51,7 +51,7 @@ public class blackjackUIScript : MonoBehaviour
     {
         if (betTextNumber.IsActive())
         {
-            betTextNumber.text = (betSlider.value * 50).ToString();
+            betTextNumber.text = betSlider.value.ToString();
         }
     }
 
@@ -68,7 +68,7 @@ public class blackjackUIScript : MonoBehaviour
         betSlider.gameObject.SetActive(enabled);
         betText.SetActive(enabled);
         betTextNumber.gameObject.SetActive(enabled);
-        betSlider.maxValue = GetFunds() / 50;
+        betSlider.maxValue = 100;
 
         SetFunds(true);
     }
@@ -120,11 +120,11 @@ public class blackjackUIScript : MonoBehaviour
     public void OnDealClick()
     {
         ClearTable();
-        player.SetBetAmount((int)betSlider.value * 50);
+        player.SetBetAmount((int)betSlider.value);
         SetDeal(false);
         StartCoroutine(dealer.Deal());
         player.ToggleTableLean();
-        ChangeFunds(-(int)betSlider.value * 50);
+        ChangeFunds(-(int)betSlider.value);
     }
 
     public void OnDealAgainClick(int bet)
