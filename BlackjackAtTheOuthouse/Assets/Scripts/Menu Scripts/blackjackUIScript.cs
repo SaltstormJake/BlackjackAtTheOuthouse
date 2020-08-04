@@ -22,6 +22,13 @@ public class blackjackUIScript : MonoBehaviour
     [SerializeField] Text fundsTextNumber;
     [SerializeField] dealerScript dealer;
     [SerializeField] playerScript player;
+    [SerializeField] optionsMenuScript options;
+
+    [SerializeField] Text playerHandValueText;
+    [SerializeField] Text playerHandValueTextNumber;
+    [SerializeField] Text dealerHandValueText;
+    [SerializeField] Text dealerHandValueTextNumber;
+
     int funds = 500;
     int betAmount;
 
@@ -37,6 +44,7 @@ public class blackjackUIScript : MonoBehaviour
         SplitButton.onClick.AddListener(OnSplitClick);
         insuranceYesButton.onClick.AddListener(() => OnInsuranceClick(true));
         insuranceNoButton.onClick.AddListener(() => OnInsuranceClick(false));
+        betSlider.onValueChanged.AddListener(OnValueChangedBetSlider);
     }
 
     // Start is called before the first frame update
@@ -49,10 +57,12 @@ public class blackjackUIScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (betTextNumber.IsActive())
-        {
-            betTextNumber.text = betSlider.value.ToString();
-        }
+
+    }
+
+    void OnValueChangedBetSlider(float value)
+    {
+        betTextNumber.text = betSlider.value.ToString();
     }
 
     public void ClearTable()
@@ -69,8 +79,24 @@ public class blackjackUIScript : MonoBehaviour
         betText.SetActive(enabled);
         betTextNumber.gameObject.SetActive(enabled);
         betSlider.maxValue = 100;
-
         SetFunds(true);
+        if (options.GetShowOnUIToggle())
+        {
+            playerHandValueText.gameObject.SetActive(true);
+            playerHandValueTextNumber.gameObject.SetActive(true);
+            dealerHandValueText.gameObject.SetActive(true);
+            dealerHandValueTextNumber.gameObject.SetActive(true);
+        }
+    }
+
+    public void SetPlayerHandValueText(int value)
+    {
+        playerHandValueTextNumber.text = value.ToString();
+    }
+
+    public void SetDealerHandValueText(int value)
+    {
+        dealerHandValueTextNumber.text = value.ToString();
     }
 
     public void SetFunds(bool enabled)
@@ -166,7 +192,7 @@ public class blackjackUIScript : MonoBehaviour
 
     private void OnSplitClick()
     {
-
+        //to be implemented in the future...maybe
     }
     
     private void OnInsuranceClick(bool tookInsurance)

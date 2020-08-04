@@ -18,7 +18,6 @@ public class musicScript : MonoBehaviour
     void Start()
     {
         sound.clip = music;
-        //PlayMusic();
     }
 
     // Update is called once per frame

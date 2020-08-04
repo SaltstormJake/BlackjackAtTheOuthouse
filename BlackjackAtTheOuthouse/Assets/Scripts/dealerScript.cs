@@ -13,6 +13,7 @@ public class dealerScript : MonoBehaviour
     [SerializeField] blackjackUIScript UI;
     [SerializeField] playerScript player;
     [SerializeField] resultsScreenScript results;
+    [SerializeField] optionsMenuScript options;
 
     [SerializeField] List<List<AudioClip>> banterLines;
 
@@ -91,14 +92,11 @@ public class dealerScript : MonoBehaviour
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
         yield return new WaitForSeconds(0.5f);
-        DealCardToPlayer();
-        yield return new WaitForSeconds(1.0f);
-        DealCardToPlayer();
-        yield return new WaitForSeconds(1.0f);
-        DealCardToSelf();
-        yield return new WaitForSeconds(1.0f);
-        DealCardToSelfFaceDown();
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(DealCardToPlayer());
+        yield return StartCoroutine(DealCardToPlayer());
+        yield return StartCoroutine(DealCardToSelf());
+        yield return StartCoroutine(DealCardToSelfFaceDown());
+        yield return new WaitForSeconds(0.5f);
         if(hand[0].GetComponent<cardScript>().GetValue() == 11 && UI.GetFunds() >= (int)(player.GetBetAmount() * 1.5)) //gives the player the option to purchase insurance
         {
             UI.SetInsurance(true);
@@ -118,8 +116,8 @@ public class dealerScript : MonoBehaviour
 
     public IEnumerator Hit()
     {
-        DealCardToPlayer();
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(DealCardToPlayer());
+        yield return new WaitForSeconds(0.5f);
         if (player.GetHandValue() > 21)
         {
             if (player.CheckAces())
@@ -129,32 +127,33 @@ public class dealerScript : MonoBehaviour
             else
                 StartCoroutine(React(blackjackUIScript.Result.PlayerBust));
         }
-        else if (player.GetHandSize() == 5 || player.GetHandValue() == 21)
+        else if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
             StartCoroutine(Stand());
         else
             UI.SetHitAndStand(true);
-        //Debug.Log(player.GetHandSize());
     }
 
     public IEnumerator Stand()
     {
         cardScript script = hand[1].GetComponent<cardScript>();
-        StartCoroutine(script.Flip());
         StartCoroutine(script.RaiseAndLowerCard());
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(script.Flip());
+        if (options.GetShowOnUIToggle())
+            UI.SetDealerHandValueText(GetHandValue());
+        yield return new WaitForSeconds(0.5f);
         if (hand[0].GetComponent<cardScript>().GetValue() == 11 && hand[1].GetComponent<cardScript>().GetValue() == 11)
             CheckAces();
-        while(GetHandValue() < 17 && GetHandSize() < 5)
+        while(GetHandValue() < 17 && (GetHandSize() < 5 || options.GetFiveCardCharlieToggleDisabled()))
         {
-            DealCardToSelf();
-            yield return new WaitForSeconds(1.0f);
+            yield return StartCoroutine(DealCardToSelf());
+            yield return new WaitForSeconds(0.25f);
             if (GetHandValue() > 21)
                 CheckAces();
         }
         if(GetHandValue() == 17 && hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11) != null)
         {
-            DealCardToSelf();
-            yield return new WaitForSeconds(1.0f);
+            yield return StartCoroutine(DealCardToSelf());
+            yield return new WaitForSeconds(0.25f);
         }
         if (GetHandValue() > 21)
             StartCoroutine(React(blackjackUIScript.Result.DealerBust));
@@ -171,9 +170,11 @@ public class dealerScript : MonoBehaviour
         {
             UI.SetHitAndStand(false);
             UI.SetDoubleDown(false);
-            StartCoroutine(script.Flip());
             StartCoroutine(script.RaiseAndLowerCard());
-            yield return new WaitForSeconds(1.5f);
+            yield return StartCoroutine(script.Flip());
+            if (options.GetShowOnUIToggle())
+                UI.SetDealerHandValueText(GetHandValue());
+            yield return new WaitForSeconds(0.5f);
             StartCoroutine(EvaluateHands());
         }
         else if(player.GetHandValue() == 21)
@@ -185,9 +186,11 @@ public class dealerScript : MonoBehaviour
     private IEnumerator Blackjack()
     {
         cardScript script = hand[1].GetComponent<cardScript>();
-        StartCoroutine(script.Flip());
         StartCoroutine(script.RaiseAndLowerCard());
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(script.Flip());
+        if (options.GetShowOnUIToggle())
+            UI.SetDealerHandValueText(GetHandValue());
+        yield return new WaitForSeconds(0.5f);
         if (player.GetHandValue() > GetHandValue())
             StartCoroutine(React(blackjackUIScript.Result.PlayerBlackjack));
         else if (GetHandValue() > player.GetHandValue())
@@ -216,9 +219,8 @@ public class dealerScript : MonoBehaviour
     public IEnumerator DoubleDown()
     {
         player.DoubleBet();
-        Debug.Log(player.GetHandSize());
-        DealCardToPlayer();
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(DealCardToPlayer());
+        yield return new WaitForSeconds(0.5f);
         StartCoroutine(Stand());
     }
 
@@ -227,9 +229,9 @@ public class dealerScript : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         if (GetHandValue() == 21 && GetHandSize() == 2)
             StartCoroutine(React(blackjackUIScript.Result.DealerBlackjack));
-        else if (player.GetHandSize() == 5 && GetHandSize() < 5)
+        else if (!options.GetFiveCardCharlieToggleDisabled() && player.GetHandSize() == 5 && GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Player5Cards));
-        else if (GetHandSize() == 5 && player.GetHandSize() < 5)
+        else if (!options.GetFiveCardCharlieToggleDisabled() && GetHandSize() == 5 && player.GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Dealer5Cards));
         else if (GetHandValue() > player.GetHandValue())
         {
@@ -309,7 +311,7 @@ public class dealerScript : MonoBehaviour
         yield return null;
     }
 
-    public void DealCardToPlayer()
+    public IEnumerator DealCardToPlayer()
     {
         GameObject card = deck.DealCard();
         cardScript script = card.GetComponent<cardScript>();
@@ -317,12 +319,14 @@ public class dealerScript : MonoBehaviour
         Vector3 cardPos = playerHandPosition;
         cardPos.z -= player.GetHandSize() * cardSpacing;
         cardPos.y += player.GetHandSize() * 0.1f;
-        StartCoroutine(script.MoveCard(cardPos));
         StartCoroutine(script.Flip());
+        yield return StartCoroutine(script.MoveCard(cardPos));
         player.addToHand(card);
+        if(options.GetShowOnUIToggle())
+            UI.SetPlayerHandValueText(player.GetHandValue());
     }
 
-    private void DealCardToSelf()
+    private IEnumerator DealCardToSelf()
     {
         GameObject card = deck.DealCard();
         cardScript script = card.GetComponent<cardScript>();
@@ -330,12 +334,14 @@ public class dealerScript : MonoBehaviour
         Vector3 cardPos = dealerHandPosition;
         cardPos.z -= hand.Count * cardSpacing;
         cardPos.y += hand.Count * 0.1f;
-        StartCoroutine(script.MoveCard(cardPos));
         StartCoroutine(script.Flip());
+        yield return StartCoroutine(script.MoveCard(cardPos));
         AddCardToHand(card);
+        if(options.GetShowOnUIToggle())
+            UI.SetDealerHandValueText(GetHandValue());
     }
 
-    private void DealCardToSelfFaceDown()
+    private IEnumerator DealCardToSelfFaceDown()
     {
         GameObject card = deck.DealCard();
         cardScript script = card.GetComponent<cardScript>();
@@ -343,7 +349,7 @@ public class dealerScript : MonoBehaviour
         Vector3 cardPos = dealerHandPosition;
         cardPos.z -= hand.Count * cardSpacing;
         cardPos.y += hand.Count * 0.1f;
-        StartCoroutine(script.MoveCard(cardPos));
+        yield return StartCoroutine(script.MoveCard(cardPos));
         AddCardToHand(card);
     }
 

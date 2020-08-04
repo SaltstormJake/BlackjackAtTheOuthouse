@@ -18,6 +18,7 @@ public class resultsScreenScript : MonoBehaviour
     {
         dealAgainButton.onClick.AddListener(DealButtonOnClick);
         quitButton.onClick.AddListener(QuitButtonOnClick);
+        betSlider.onValueChanged.AddListener(OnValueChangedBetSlider);
     }
 
     // Start is called before the first frame update
@@ -29,10 +30,12 @@ public class resultsScreenScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (betTextNumber.IsActive())
-        {
-            betTextNumber.text = betSlider.value.ToString();
-        }
+
+    }
+
+    void OnValueChangedBetSlider(float value)
+    {
+        betTextNumber.text = value.ToString();
     }
 
     public void ShowResults(blackjackUIScript.Result r, int amount)
@@ -85,6 +88,9 @@ public class resultsScreenScript : MonoBehaviour
         quitButton.gameObject.SetActive(enabled);
 
         betSlider.gameObject.SetActive(enabled);
+
+        UI.SetDealerHandValueText(0);
+        UI.SetPlayerHandValueText(0);
         if (UI.GetFunds() < 100)
         {
             betSlider.maxValue = UI.GetFunds();
