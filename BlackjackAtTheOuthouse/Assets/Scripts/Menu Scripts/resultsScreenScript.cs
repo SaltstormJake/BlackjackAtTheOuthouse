@@ -92,13 +92,10 @@ public class resultsScreenScript : MonoBehaviour
         UI.SetDealerHandValueText(0);
         UI.SetPlayerHandValueText(0);
         if (UI.GetFunds() < 100)
-        {
             betSlider.maxValue = UI.GetFunds();
-        }
         else
-        {
             betSlider.maxValue = 100;
-        }
+        betTextNumber.text = betSlider.value.ToString();
         betText.SetActive(enabled);
     }
 

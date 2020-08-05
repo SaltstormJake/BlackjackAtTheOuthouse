@@ -97,19 +97,19 @@ public class dealerScript : MonoBehaviour
         yield return StartCoroutine(DealCardToSelf());
         yield return StartCoroutine(DealCardToSelfFaceDown());
         yield return new WaitForSeconds(0.5f);
-        if(hand[0].GetComponent<cardScript>().GetValue() == 11 && UI.GetFunds() >= (int)(player.GetBetAmount() * 1.5)) //gives the player the option to purchase insurance
+        if(hand[0].GetComponent<cardScript>().GetValue() == 11 && UI.GetFunds() >= (int)(player.GetBetAmount() * 0.5)) //gives the player the option to purchase insurance
         {
             UI.SetInsurance(true);
-            UI.SetHitAndStand(true);
-            if (UI.GetFunds() >= player.GetBetAmount() * 2)
-                UI.SetDoubleDown(true);
+           // UI.SetHitAndStand(true);
+           // if (UI.GetFunds() >= player.GetBetAmount())
+           //     UI.SetDoubleDown(true);
         }
         else if (player.GetHandValue() == 21 || GetHandValue() == 21)
             StartCoroutine(Blackjack());
         else
         {
             UI.SetHitAndStand(true);
-            if (UI.GetFunds() >= player.GetBetAmount() * 2)
+            if (UI.GetFunds() >= player.GetBetAmount())
                 UI.SetDoubleDown(true);
         }
     }
@@ -117,7 +117,6 @@ public class dealerScript : MonoBehaviour
     public IEnumerator Hit()
     {
         yield return StartCoroutine(DealCardToPlayer());
-        yield return new WaitForSeconds(0.5f);
         if (player.GetHandValue() > 21)
         {
             if (player.CheckAces())
@@ -140,7 +139,6 @@ public class dealerScript : MonoBehaviour
         yield return StartCoroutine(script.Flip());
         if (options.GetShowOnUIToggle())
             UI.SetDealerHandValueText(GetHandValue());
-        yield return new WaitForSeconds(0.5f);
         if (hand[0].GetComponent<cardScript>().GetValue() == 11 && hand[1].GetComponent<cardScript>().GetValue() == 11)
             CheckAces();
         while(GetHandValue() < 17 && (GetHandSize() < 5 || options.GetFiveCardCharlieToggleDisabled()))
@@ -163,8 +161,12 @@ public class dealerScript : MonoBehaviour
 
     public IEnumerator Insurance(bool tookInsurance)
     {
-        if(tookInsurance)
+        if (tookInsurance)
+        {
             player.SetInsurance(true);
+            if (UI.GetFunds() < player.GetBetAmount())
+                UI.SetDoubleDown(false);
+        }
         cardScript script = hand[1].GetComponent<cardScript>();
         if(script.GetValue() == 10)
         {
@@ -210,7 +212,6 @@ public class dealerScript : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
         deck.GetComponent<Animation>().Play("deckShuffleAnimation");
         anim.Play("godBossShuffleAnimation");
-        deck.ShuffleAndRefill();
         while (voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
         player.ToggleTableLean();
@@ -409,6 +410,7 @@ public class dealerScript : MonoBehaviour
         if (ace != null)
         {
             ace.GetComponent<cardScript>().changeValue(1);
+            UI.SetDealerHandValueText(GetHandValue());
             return true;
         }
         return false;

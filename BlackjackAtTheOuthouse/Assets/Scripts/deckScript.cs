@@ -7,10 +7,12 @@ public class deckScript : MonoBehaviour
 
     private int iterator;
     private float deckHeight;
+   // private Vector3 originalPosition;
     private void Awake()
     {
         iterator = Deck.Count - 1;
         deckHeight = transform.localScale.y;
+        //originalPosition = transform.position;
     }
 
     // Start is called before the first frame update
@@ -33,16 +35,26 @@ public class deckScript : MonoBehaviour
             Vector3 cardPos = transform.position;
             cardPos.y += 1;
             card = Instantiate(card, cardPos, Quaternion.identity);
-            Vector3 rotation = card.transform.eulerAngles;
-            rotation.x += 180;
-            rotation.y += -90;
-            Vector3 scale = card.transform.localScale;
-            scale *= 4;
-            Vector3 position = card.transform.position;
-            position.y += 10;
-            card.transform.position = position;
-            card.transform.eulerAngles = rotation;
-            card.transform.localScale = scale;
+            Vector3 cardRotation = card.transform.eulerAngles;
+            cardRotation.x += 180;
+            cardRotation.y += -90;
+            Vector3 cardScale = card.transform.localScale;
+            cardScale *= 4;
+            Vector3 cardPosition = card.transform.position;
+            cardPosition.y += 10;
+            card.transform.position = cardPosition;
+            card.transform.eulerAngles = cardRotation;
+            card.transform.localScale = cardScale;
+
+            //shrink the deck by the width of 1 card
+            Vector3 deckScale = transform.localScale;
+            deckScale.y -= (deckHeight / 52);
+            transform.localScale = deckScale;
+
+            Vector3 deckPosition = transform.position;
+            deckPosition.y -= ((4.63f - 1.73f) / 52);
+            transform.position = deckPosition;
+
             return card;
         }
         else
@@ -67,6 +79,18 @@ public class deckScript : MonoBehaviour
     {
         Shuffle();
         iterator = Deck.Count - 1;
+        StartCoroutine(ReturnScale());
+    }
+
+    private IEnumerator ReturnScale()
+    {
+        while(transform.localScale.y < deckHeight)
+        {
+            Vector3 deckScale = transform.localScale;
+            deckScale.y += 0.1f;
+            transform.localScale = deckScale;
+            yield return new WaitForSeconds(0.01f);
+        }
     }
 
     void OutOfCards()

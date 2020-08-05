@@ -79,6 +79,7 @@ public class blackjackUIScript : MonoBehaviour
         betText.SetActive(enabled);
         betTextNumber.gameObject.SetActive(enabled);
         betSlider.maxValue = 100;
+        betTextNumber.text = betSlider.value.ToString();
         SetFunds(true);
         if (options.GetShowOnUIToggle())
         {
@@ -201,6 +202,8 @@ public class blackjackUIScript : MonoBehaviour
         if(tookInsurance)
             ChangeFunds(-(int)(player.GetBetAmount() / 2));
         SetInsurance(false);
+        SetHitAndStand(true);
+        SetDoubleDown(true);
     }
 
 

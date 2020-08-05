@@ -8,7 +8,7 @@ Shrink deck as cards are drawn
 Add animation for clearing the table
 add actual flame to candle and flickering to candlelight, flame sound to candle and blown out sound
 Touch up animations
-Clean up code
+Clean up code (GetComponent is apparently costly, minimize it)
 Add comments to code
 Add idle while dealer is pointing at the deck
 
@@ -29,5 +29,6 @@ Prevent cards from clipping through table
 fix cards from stuttering
 fix dealer hand position so 5th card doesn't clip
 smoothen transitions
+UI values are not accurate if you have aces
 
 Get a better sound for the card hitting the table (?)

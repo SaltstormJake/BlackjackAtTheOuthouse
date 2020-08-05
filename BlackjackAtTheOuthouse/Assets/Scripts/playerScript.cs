@@ -130,6 +130,7 @@ public class playerScript : MonoBehaviour
         GameObject ace = hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11);
         if(ace != null){
             ace.GetComponent<cardScript>().changeValue(1);
+            UI.SetPlayerHandValueText(GetHandValue());
             return true;
         }
         return false;
