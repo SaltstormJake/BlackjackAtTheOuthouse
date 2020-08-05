@@ -1,16 +1,14 @@
 To-do list:
 
 FEATURES:
+Make new animations for the dealer for different outcomes
 Add banter voice lines
 Touch up UI graphics
-Make new animations for the dealer for different outcomes
-Shrink deck as cards are drawn
 Add animation for clearing the table
 add actual flame to candle and flickering to candlelight, flame sound to candle and blown out sound
 Touch up animations
 Clean up code (GetComponent is apparently costly, minimize it)
 Add comments to code
-Add idle while dealer is pointing at the deck
 
 add special cinematic for running out of cards (?)
 
@@ -21,14 +19,7 @@ Add splitting (?)
 
 
 FIXES:
-Fix screw-up with dealer's hand value in the UI when aces are involved
+Dealer weirdly changes positions when going from sighing to idling
 Fix janky point at deck animation
-Fix bug where dealer thinks you're out of money if you bet everything
-fix always drawing queen of spades first (shuffling issue)
 Prevent cards from clipping through table
 fix cards from stuttering
-fix dealer hand position so 5th card doesn't clip
-smoothen transitions
-UI values are not accurate if you have aces
-
-Get a better sound for the card hitting the table (?)

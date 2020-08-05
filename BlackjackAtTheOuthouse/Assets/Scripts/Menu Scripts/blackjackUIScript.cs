@@ -84,9 +84,7 @@ public class blackjackUIScript : MonoBehaviour
         if (options.GetShowOnUIToggle())
         {
             playerHandValueText.gameObject.SetActive(true);
-            playerHandValueTextNumber.gameObject.SetActive(true);
             dealerHandValueText.gameObject.SetActive(true);
-            dealerHandValueTextNumber.gameObject.SetActive(true);
         }
     }
 
@@ -202,8 +200,6 @@ public class blackjackUIScript : MonoBehaviour
         if(tookInsurance)
             ChangeFunds(-(int)(player.GetBetAmount() / 2));
         SetInsurance(false);
-        SetHitAndStand(true);
-        SetDoubleDown(true);
     }
 
 
@@ -227,5 +223,7 @@ public class blackjackUIScript : MonoBehaviour
         StartCoroutine(player.QuitGame());
         StartCoroutine(dealer.QuitGame());
         SetFunds(false);
+        playerHandValueText.gameObject.SetActive(false);
+        dealerHandValueText.gameObject.SetActive(false);
     }
 }

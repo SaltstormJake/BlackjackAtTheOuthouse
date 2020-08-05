@@ -6,6 +6,7 @@ public class devToolsScript : MonoBehaviour
 {
     [SerializeField] KeyCode speedUpKey;
     [SerializeField] float speedUpTime;
+    [SerializeField] AudioSource voiceSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,8 +23,14 @@ public class devToolsScript : MonoBehaviour
     void SpeedUp()
     {
         if (Time.timeScale == 1)
+        {
             Time.timeScale = speedUpTime;
+            voiceSource.pitch = speedUpTime;
+        }
         else
+        { 
             Time.timeScale = 1;
+            voiceSource.pitch = 1;
+        }
     }
 }
