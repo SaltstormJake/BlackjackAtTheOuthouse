@@ -42,24 +42,47 @@ public class cardScript : MonoBehaviour
         return face;
     }
 
-    public IEnumerator RaiseAndLowerCard()
+    public IEnumerator LiftAndFlip(float distance)
+    {
+        Vector3 originalPos = transform.position;
+        float counter = 0;
+        while(counter < distance)
+        {
+            Vector3 currentPos = transform.position;
+            currentPos.y += 15 * Time.deltaTime;
+            counter += 15 * Time.deltaTime;
+            transform.position = currentPos;
+            yield return null;
+        }
+        yield return StartCoroutine(Flip());
+        while(counter > 0)
+        {
+            Vector3 finalPos = transform.position;
+            finalPos.y -= 15 * Time.deltaTime;
+            counter -= 15 * Time.deltaTime;
+            transform.position = finalPos;
+            yield return null;
+        }
+        transform.position = originalPos;
+    }
+
+    public IEnumerator RaiseAndLowerCard(float distance)
     {
         Vector3 originalPos = transform.position; //return to this later to fix slight deviations
         //Raises the card above the table
-        float distance = 1;
         while (distance > 0)
         {
             Vector3 currentPos = transform.position;
-            currentPos.y += 2 * Time.deltaTime;
-            distance -= 2 * Time.deltaTime;
+            currentPos.y += 15 * Time.deltaTime;
+            distance -= 15 * Time.deltaTime;
             transform.position = currentPos;
             yield return null;
         }
         while(distance < 1)
         {
             Vector3 finalPos = transform.position;
-            finalPos.y -= 2 * Time.deltaTime;
-            distance += 2 * Time.deltaTime;
+            finalPos.y -= 15 * Time.deltaTime;
+            distance += 15 * Time.deltaTime;
             transform.position = finalPos;
             yield return null;
         }

@@ -139,8 +139,7 @@ public class dealerScript : MonoBehaviour
     public IEnumerator Stand()
     {
         cardScript script = hand[1].GetComponent<cardScript>();
-        StartCoroutine(script.RaiseAndLowerCard());
-        yield return StartCoroutine(script.Flip());
+        yield return StartCoroutine(script.LiftAndFlip(5));
         if (GetHandValue() > 21)
             CheckAces();
         if (options.GetShowOnUIToggle())
@@ -180,8 +179,7 @@ public class dealerScript : MonoBehaviour
         {
             UI.SetHitAndStand(false);
             UI.SetDoubleDown(false);
-            StartCoroutine(script.RaiseAndLowerCard());
-            yield return StartCoroutine(script.Flip());
+            yield return StartCoroutine(script.LiftAndFlip(5));
             if (options.GetShowOnUIToggle())
                 UI.SetDealerHandValueText(GetHandValue());
             yield return new WaitForSeconds(0.5f);
@@ -202,8 +200,7 @@ public class dealerScript : MonoBehaviour
     private IEnumerator Blackjack()
     {
         cardScript script = hand[1].GetComponent<cardScript>();
-        StartCoroutine(script.RaiseAndLowerCard());
-        yield return StartCoroutine(script.Flip());
+        yield return StartCoroutine(script.LiftAndFlip(5));
         if (options.GetShowOnUIToggle())
             UI.SetDealerHandValueText(GetHandValue());
         yield return new WaitForSeconds(0.5f);
