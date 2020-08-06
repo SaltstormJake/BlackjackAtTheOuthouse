@@ -269,28 +269,28 @@ public class dealerScript : MonoBehaviour
                 anim.CrossFade("godBossSnapAnimation");
                 break;
             case blackjackUIScript.Result.PlayerBlackjack:
-                anim.CrossFade("godBossSlapHeadAnimation");
+                anim.CrossFade("godBossCollapseAnimation"); //replace this one
                 break;
             case blackjackUIScript.Result.DealerBlackjack:
                 if (player.GetInsurance())
                     anim.CrossFade("godBossShrugAnimation");
                 else
-                    anim.CrossFade("godBossSnapAnimation");
+                    anim.CrossFade("godBossSpinHeadAnimation");
                 break;
             case blackjackUIScript.Result.BothHaveBlackjack:
                 if (player.GetInsurance())
-                    anim.CrossFade("godBossSlapHeadAnimation");
+                    anim.CrossFade("godBossSighAnimation"); //replace this one ?
                 else
                     anim.CrossFade("godBossShrugAnimation");
                 break;
             case blackjackUIScript.Result.PlayerBust:
-                anim.CrossFade("godBossSnapAnimation");
+                anim.CrossFade("godBossSnapAnimation"); //replace this one
                 break;
             case blackjackUIScript.Result.DealerBust:
                 anim.CrossFade("godBossSlapHeadAnimation");
                 break;
             case blackjackUIScript.Result.Player5Cards:
-                anim.CrossFade("godBossSlapHeadAnimation");
+                anim.CrossFade("godBossCollapseAnimation");
                 break;
             case blackjackUIScript.Result.Dealer5Cards:
                 anim.CrossFade("godBossSpinHeadAnimation");

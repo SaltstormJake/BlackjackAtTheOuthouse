@@ -19,6 +19,7 @@ Add splitting (?)
 
 
 FIXES:
+Hand isn't recognized as natural blackjack if dealer is showing ace
 Dealer weirdly changes positions when going from sighing to idling
 Fix janky point at deck animation
 Prevent cards from clipping through table
