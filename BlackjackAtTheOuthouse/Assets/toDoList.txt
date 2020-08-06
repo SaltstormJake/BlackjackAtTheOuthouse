@@ -9,6 +9,9 @@ add actual flame to candle and flickering to candlelight, flame sound to candle 
 Touch up animations
 Clean up code (GetComponent is apparently costly, minimize it)
 Add comments to code
+add sound to collapse animation (when the table is grabbed)
+fix the animation to make the arm reassembly look more natural
+remove dev tools object when everything is done
 
 add special cinematic for running out of cards (?)
 
@@ -19,8 +22,10 @@ Add splitting (?)
 
 
 FIXES:
-Hand isn't recognized as natural blackjack if dealer is showing ace
+Dealer UI value not showing properly when hand is 2s, As, Jd, 4d, player is 10s, 8h
 Dealer weirdly changes positions when going from sighing to idling
 Fix janky point at deck animation
+Make better deck idle
 Prevent cards from clipping through table
-fix cards from stuttering
+
+fix cards from stuttering (?)

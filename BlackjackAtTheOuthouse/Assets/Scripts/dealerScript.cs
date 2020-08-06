@@ -187,7 +187,7 @@ public class dealerScript : MonoBehaviour
         }
         else if(player.GetHandValue() == 21)
         {
-            StartCoroutine(Stand());
+            StartCoroutine(Blackjack());
         }
         else
         {
@@ -260,6 +260,8 @@ public class dealerScript : MonoBehaviour
     private IEnumerator React(blackjackUIScript.Result r)
     {
         TogglePointToDeck();
+        while (anim.isPlaying)
+            yield return new WaitForSeconds(0.01f);
         switch (r)
         {
             case blackjackUIScript.Result.PlayerWins:
@@ -269,7 +271,7 @@ public class dealerScript : MonoBehaviour
                 anim.CrossFade("godBossSnapAnimation");
                 break;
             case blackjackUIScript.Result.PlayerBlackjack:
-                anim.CrossFade("godBossCollapseAnimation"); //replace this one
+                anim.CrossFade("godBossHeadInHandsAnimation");
                 break;
             case blackjackUIScript.Result.DealerBlackjack:
                 if (player.GetInsurance())
@@ -483,13 +485,13 @@ public class dealerScript : MonoBehaviour
         {
             anim["godBossPointToDeckAnimation"].normalizedTime = 0.0f;
             anim["godBossPointToDeckAnimation"].speed = 1.0f;
-            anim.Play("godBossPointToDeckAnimation");
+            anim.CrossFade("godBossPointToDeckAnimation");
         }
         else
         {
             anim["godBossPointToDeckAnimation"].normalizedTime = 1.0f;
             anim["godBossPointToDeckAnimation"].speed = -1.0f;
-            anim.Play("godBossPointToDeckAnimation");
+            anim.CrossFade("godBossPointToDeckAnimation");
         }
         pointing = !pointing;
     }
