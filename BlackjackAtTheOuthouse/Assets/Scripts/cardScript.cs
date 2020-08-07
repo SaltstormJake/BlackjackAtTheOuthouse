@@ -116,7 +116,7 @@ public class cardScript : MonoBehaviour
     public IEnumerator MoveCard(Vector3 destination)
     {
         float speed = 30;
-        while(Vector3.Distance(transform.position, destination) > 0.2f)
+        while(Vector3.Distance(transform.position, destination) > 1.0f)
         {
             Vector3 direction = (destination - transform.position).normalized;
             transform.Translate(direction * Time.deltaTime * speed, Space.World);
