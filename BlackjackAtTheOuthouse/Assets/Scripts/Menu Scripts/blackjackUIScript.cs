@@ -196,7 +196,7 @@ public class blackjackUIScript : MonoBehaviour
     
     private void OnInsuranceClick(bool tookInsurance)
     {
-        StartCoroutine(dealer.Insurance(tookInsurance));
+        dealer.Insurance(tookInsurance);
         if(tookInsurance)
             ChangeFunds(-(int)(player.GetBetAmount() / 2));
         SetInsurance(false);

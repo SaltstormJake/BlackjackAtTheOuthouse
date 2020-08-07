@@ -168,25 +168,17 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(EvaluateHands());
     }
 
-    public IEnumerator Insurance(bool tookInsurance)
+    public void Insurance(bool tookInsurance)
     {
         if (tookInsurance)
         {
             player.SetInsurance(true);
         }
         cardScript script = hand[1].GetComponent<cardScript>();
-        if(script.GetValue() == 10)
+        if(script.GetValue() == 10 || player.GetHandValue() == 21)
         {
             UI.SetHitAndStand(false);
             UI.SetDoubleDown(false);
-            yield return StartCoroutine(script.LiftAndFlip(5));
-            if (options.GetShowOnUIToggle())
-                UI.SetDealerHandValueText(GetHandValue());
-            yield return new WaitForSeconds(0.5f);
-            StartCoroutine(EvaluateHands());
-        }
-        else if(player.GetHandValue() == 21)
-        {
             StartCoroutine(Blackjack());
         }
         else
@@ -239,20 +231,14 @@ public class dealerScript : MonoBehaviour
     private IEnumerator EvaluateHands()
     {
         yield return new WaitForSeconds(1.5f);
-        if (GetHandValue() == 21 && GetHandSize() == 2)
-            StartCoroutine(React(blackjackUIScript.Result.DealerBlackjack));
-        else if (!options.GetFiveCardCharlieToggleDisabled() && player.GetHandSize() == 5 && GetHandSize() < 5)
+        if (!options.GetFiveCardCharlieToggleDisabled() && player.GetHandSize() == 5 && GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Player5Cards));
         else if (!options.GetFiveCardCharlieToggleDisabled() && GetHandSize() == 5 && player.GetHandSize() < 5)
             StartCoroutine(React(blackjackUIScript.Result.Dealer5Cards));
         else if (GetHandValue() > player.GetHandValue())
-        {
             StartCoroutine(React(blackjackUIScript.Result.DealerWins));
-        }
         else if (player.GetHandValue() > GetHandValue())
-        {
             StartCoroutine(React(blackjackUIScript.Result.PlayerWins));
-        }
         else
             StartCoroutine(React(blackjackUIScript.Result.Push));
     }

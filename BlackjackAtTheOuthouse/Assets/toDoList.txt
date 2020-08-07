@@ -22,8 +22,6 @@ Add splitting (?)
 
 
 FIXES:
-Dealer UI value not showing properly when hand is 2s, As, Jd, 4d, player is 10s, 8h
-Dealer weirdly changes positions when going from sighing to idling
 Fix janky point at deck animation
 Make better deck idle
 Prevent cards from clipping through table
