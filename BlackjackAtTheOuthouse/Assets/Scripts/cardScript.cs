@@ -12,19 +12,13 @@ public class cardScript : MonoBehaviour
     [SerializeField] private int value;
     [SerializeField] AudioClip hittingTableSound;
 
-    private bool isFaceUp;
+    private bool isFaceUp; //purely for determining final flip position; could be used as actual information if need be, but not necessary for this game
     
 
     // Start is called before the first frame update
     void Start()
     {
         isFaceUp = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public int GetValue()
@@ -42,20 +36,20 @@ public class cardScript : MonoBehaviour
         return face;
     }
 
-    public IEnumerator LiftAndFlip(float distance)
+    public IEnumerator LiftAndFlip(float distance) //raises the card, flips it, and lowers it again
     {
-        Vector3 originalPos = transform.position;
+        Vector3 originalPos = transform.position; //save this to prevent deviation
         float counter = 0;
         while(counter < distance)
         {
-            Vector3 currentPos = transform.position;
+            Vector3 currentPos = transform.position; //moves the card upward by the amount specified in the parameter
             currentPos.y += 15 * Time.deltaTime;
             counter += 15 * Time.deltaTime;
             transform.position = currentPos;
             yield return null;
         }
         yield return StartCoroutine(Flip());
-        while(counter > 0)
+        while(counter > 0) //moves the card downward by the amount specified in the parameter
         {
             Vector3 finalPos = transform.position;
             finalPos.y -= 15 * Time.deltaTime;
@@ -63,30 +57,7 @@ public class cardScript : MonoBehaviour
             transform.position = finalPos;
             yield return null;
         }
-        transform.position = originalPos;
-    }
-
-    public IEnumerator RaiseAndLowerCard(float distance)
-    {
-        Vector3 originalPos = transform.position; //return to this later to fix slight deviations
-        //Raises the card above the table
-        while (distance > 0)
-        {
-            Vector3 currentPos = transform.position;
-            currentPos.y += 15 * Time.deltaTime;
-            distance -= 15 * Time.deltaTime;
-            transform.position = currentPos;
-            yield return null;
-        }
-        while(distance < 1)
-        {
-            Vector3 finalPos = transform.position;
-            finalPos.y -= 15 * Time.deltaTime;
-            distance += 15 * Time.deltaTime;
-            transform.position = finalPos;
-            yield return null;
-        }
-        transform.position = originalPos; //to fix slight discrepencies in positioning
+        transform.position = originalPos; //snaps back to original position to prevent deviation
     }
 
     public IEnumerator Flip()
@@ -96,8 +67,8 @@ public class cardScript : MonoBehaviour
         while(degrees > 0)
         {
             Vector3 currentRotation = transform.eulerAngles;
-            currentRotation.z += 200 * Time.deltaTime;
-            degrees -= 200 * Time.deltaTime;
+            currentRotation.z += 400 * Time.deltaTime;
+            degrees -= 400 * Time.deltaTime;
             transform.eulerAngles = currentRotation;
             yield return null;
         }
@@ -113,7 +84,7 @@ public class cardScript : MonoBehaviour
         
     }
 
-    public IEnumerator MoveCard(Vector3 destination)
+    public IEnumerator MoveCard(Vector3 destination) //moves the card in the direction of the destination until the destination is reached
     {
         float speed = 30;
         while(Vector3.Distance(transform.position, destination) > 1.0f)
@@ -123,7 +94,6 @@ public class cardScript : MonoBehaviour
             yield return null;
         }
         transform.position = destination;
-        //AudioSource.PlayClipAtPoint(hittingTableSound, transform.position, 1.0f);
     }
 
     public void changeValue(int i)

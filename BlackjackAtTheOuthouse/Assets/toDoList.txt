@@ -19,11 +19,3 @@ Create parent script for all menus (?)
 Create parent script for player and dealer hands (?)
 
 Add splitting (?)
-
-
-FIXES:
-Fix janky point at deck animation
-Make better deck idle
-Prevent cards from clipping through table
-
-fix cards from stuttering (?)

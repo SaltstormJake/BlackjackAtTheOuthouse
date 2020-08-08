@@ -4,39 +4,67 @@ using UnityEngine;
 
 public class candleScript : MonoBehaviour
 {
-    private GameObject candlelight;
+    private Light candlelight;
     private AudioSource sound;
     private Animation anim;
     [SerializeField] AudioClip whoosh;
+
+    private bool isLit;
+
     private void Awake()
     {
-        candlelight = transform.GetChild(3).gameObject;
+        candlelight = transform.GetChild(3).gameObject.GetComponent<Light>();
         sound = gameObject.GetComponent<AudioSource>();
         anim = gameObject.GetComponent<Animation>();
     }
     // Start is called before the first frame update
     void Start()
     {
-        candlelight.SetActive(false);
+        candlelight.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    public IEnumerator EnableLight()
     {
-        
-    }
-
-    public void EnableLight()
-    {
-        candlelight.SetActive(true);
+        candlelight.gameObject.SetActive(true);
+        float targetIntensity = candlelight.intensity;
+        candlelight.intensity *= 2;
         sound.clip = whoosh;
         sound.Play();
+        isLit = true;
+        while(candlelight.intensity > targetIntensity)
+        {
+            candlelight.intensity -= 0.005f;
+            yield return null;
+        }
+        candlelight.intensity = targetIntensity;
+        StartCoroutine(FlickerLoop());
+    }
+
+    private IEnumerator FlickerLoop()
+    {
+        float originalIntensity = candlelight.intensity;
+        while (isLit)
+        {
+            float maxValue = Random.Range(originalIntensity, originalIntensity + 2f);
+            float minValue = Random.Range(originalIntensity, originalIntensity - 1f);
+            while(candlelight.intensity < originalIntensity * 1.3f)
+            {
+                candlelight.intensity += 0.005f;
+                yield return null;
+            }
+            while(candlelight.intensity > originalIntensity * 0.9f)
+            {
+                candlelight.intensity -= 0.005f;
+                yield return null;
+            }
+        }
     }
 
     public void DisableLight()
     {
         //put light turning off sound here
-        candlelight.SetActive(false);
+        isLit = false;
+        candlelight.gameObject.SetActive(false);
     }
 
     public void KnockOver()

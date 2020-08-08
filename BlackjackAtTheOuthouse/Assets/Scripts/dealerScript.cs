@@ -15,18 +15,21 @@ public class dealerScript : MonoBehaviour
     [SerializeField] resultsScreenScript results;
     [SerializeField] optionsMenuScript options;
 
-    [SerializeField] List<List<AudioClip>> banterLines;
+    [SerializeField] List<AnimationClip> banterLines;
+    private int banterIterator = 0;
+    [SerializeField] List<AnimationClip> fillerBanter;
+    private int fillerIterator = 0;
 
     private Animation anim;
     private AudioSource voice;
-    private Vector3 playerHandPosition = new Vector3(180, 2, 25);
-    private Vector3 dealerHandPosition = new Vector3(205, 2, 40);
-    private float cardSpacing = 5;
+    private Vector3 playerHandPosition = new Vector3(180, 2, 25); //the position of the first card in the player's hand
+    private Vector3 dealerHandPosition = new Vector3(205, 2, 40); //the position of the first card in the dealer's hand
+    private float cardSpacing = 5; //the distance between each card in one's hand
 
     private List<GameObject> hand;
     private int handValue;
 
-    bool pointing = false;
+    bool pointing = false; //essentially a poor man's state machine
 
     private void Awake()
     {
@@ -35,24 +38,14 @@ public class dealerScript : MonoBehaviour
 
         hand = new List<GameObject>();
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void OnTriggerEnter(Collider other)
     {
+        GetComponent<BoxCollider>().enabled = false;
         StartCoroutine(Introduction());
     }
 
-
+    //The intro cutscene, after which the UI is enabled.
     private IEnumerator Introduction()
     {
         voice.clip = voiceLines[0];
@@ -74,12 +67,12 @@ public class dealerScript : MonoBehaviour
         deck.Shuffle();
         while (anim.isPlaying || voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        //while (voice.isPlaying)
-        //    yield return new WaitForSeconds(0.01f);
         Idle();
         UI.SetDeal(true);
     }
 
+    //Deals 2 cards to the player and dealer, with the second dealer card face down.
+    //Checks if anyone has a Natural Blackjack and auto-flips if so.
     public IEnumerator Deal()
     {
         player.SetInsurance(false);
@@ -114,6 +107,9 @@ public class dealerScript : MonoBehaviour
         }
     }
 
+    //Deals the player another card.
+    //Checks if the player busted when they were given the new card.
+    //Checks if the player hits 21 or 5 cards and ends their turn if so.
     public IEnumerator Hit()
     {
         yield return StartCoroutine(DealCardToPlayer());
@@ -136,6 +132,8 @@ public class dealerScript : MonoBehaviour
         }
     }
 
+    //Dealer behaves according to standard Blackjack rules.
+    //The second card is flipped over. The dealer draws until his hand is above soft 17.
     public IEnumerator Stand()
     {
         cardScript script = hand[1].GetComponent<cardScript>();
@@ -168,12 +166,12 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(EvaluateHands());
     }
 
+    //After insurance is taken or not, the dealer flips his second card if it's a 10.
+    //If not, the hand continues as normal, the player's money wasted if they
+    //took insurance that turn.
     public void Insurance(bool tookInsurance)
     {
-        if (tookInsurance)
-        {
-            player.SetInsurance(true);
-        }
+        player.SetInsurance(tookInsurance);
         cardScript script = hand[1].GetComponent<cardScript>();
         if(script.GetValue() == 10 || player.GetHandValue() == 21)
         {
@@ -189,6 +187,9 @@ public class dealerScript : MonoBehaviour
         }
     }
 
+    //Called when either the dealer or the player has a Natural Blackjack.
+    //Flips the dealer's second card, then simply compares the hands to determine
+    //who has the Blackjack.
     private IEnumerator Blackjack()
     {
         cardScript script = hand[1].GetComponent<cardScript>();
@@ -205,7 +206,9 @@ public class dealerScript : MonoBehaviour
         
     }
 
-
+    //Plays the animation for reshuffling the deck
+    //as it calls for the deck to actually shuffle
+    //and refill itself.
     private IEnumerator ReshuffleDeck()
     {
         yield return new WaitForSeconds(1.0f);
@@ -220,6 +223,8 @@ public class dealerScript : MonoBehaviour
         player.ToggleTableLean();
     }
 
+    //Doubles the player's bet, deals one more card,
+    //and then stands.
     public IEnumerator DoubleDown()
     {
         player.DoubleBet();
@@ -228,6 +233,7 @@ public class dealerScript : MonoBehaviour
         StartCoroutine(Stand());
     }
 
+    //Compares the values of both hands and awards a win accordingly.
     private IEnumerator EvaluateHands()
     {
         yield return new WaitForSeconds(1.5f);
@@ -243,6 +249,8 @@ public class dealerScript : MonoBehaviour
             StartCoroutine(React(blackjackUIScript.Result.Push));
     }
 
+    //Sets the proper animation to use after a turn ends, and then decides whether to add banter on afterwards.
+    //Gives the player more money if they run out.
     private IEnumerator React(blackjackUIScript.Result r)
     {
         TogglePointToDeck();
@@ -254,7 +262,7 @@ public class dealerScript : MonoBehaviour
                 anim.CrossFade("godBossSighAnimation");
                 break;
             case blackjackUIScript.Result.DealerWins:
-                anim.CrossFade("godBossSnapAnimation");
+                anim.CrossFade("godBossWinGestureAnimation");
                 break;
             case blackjackUIScript.Result.PlayerBlackjack:
                 anim.CrossFade("godBossHeadInHandsAnimation");
@@ -263,16 +271,16 @@ public class dealerScript : MonoBehaviour
                 if (player.GetInsurance())
                     anim.CrossFade("godBossShrugAnimation");
                 else
-                    anim.CrossFade("godBossSpinHeadAnimation");
+                    anim.CrossFade("godBossLaughAnimation");
                 break;
             case blackjackUIScript.Result.BothHaveBlackjack:
                 if (player.GetInsurance())
-                    anim.CrossFade("godBossSighAnimation"); //replace this one ?
+                    anim.CrossFade("godBossSighAnimation");
                 else
                     anim.CrossFade("godBossShrugAnimation");
                 break;
             case blackjackUIScript.Result.PlayerBust:
-                anim.CrossFade("godBossSnapAnimation"); //replace this one
+                anim.CrossFade("godBossSnapAnimation");
                 break;
             case blackjackUIScript.Result.DealerBust:
                 anim.CrossFade("godBossSlapHeadAnimation");
@@ -302,16 +310,23 @@ public class dealerScript : MonoBehaviour
         Idle();
     }
 
+    //Gives banter dialogue when this coroutine is called.
     private IEnumerator SayBanter()
     {
-        //results.DisableText();
-        //voice.clip = voiceLines[3];
-        //voice.Play();
-        //while (voice.isPlaying)
-        //    yield return new WaitForSeconds(0.01f);
+        float substantialOrFiller = Random.Range(0.0f, 1.0f);
+        if(substantialOrFiller > 0.5f)
+        {
+            //substantial
+        }
+        else
+        {
+            //filler
+        }
         yield return null;
     }
 
+    //Pulls a card from the deck and moves it to the player's hand
+    //both physically and in the backend.
     public IEnumerator DealCardToPlayer()
     {
         GameObject card = deck.DealCard();
@@ -327,21 +342,25 @@ public class dealerScript : MonoBehaviour
             UI.SetPlayerHandValueText(player.GetHandValue());
     }
 
+    //Pulls a card from the deck and moves it to the dealer's hand
+    //both physically and in the backend.
     private IEnumerator DealCardToSelf()
     {
         GameObject card = deck.DealCard();
         cardScript script = card.GetComponent<cardScript>();
         anim.CrossFade("godBossDealToSelfAnimation");
+        StartCoroutine(script.Flip());
         Vector3 cardPos = dealerHandPosition;
         cardPos.z -= hand.Count * cardSpacing;
-        cardPos.y += hand.Count * 0.1f;
-        StartCoroutine(script.Flip());
+        cardPos.y += hand.Count * 0.1f;// + 4.0f;
         yield return StartCoroutine(script.MoveCard(cardPos));
         AddCardToHand(card);
         if(options.GetShowOnUIToggle())
             UI.SetDealerHandValueText(GetHandValue());
     }
 
+    //Pulls a card from the deck and moves it to the dealer's hand
+    //both physically and in the backend, without flipping it over.
     private IEnumerator DealCardToSelfFaceDown()
     {
         GameObject card = deck.DealCard();
@@ -356,7 +375,7 @@ public class dealerScript : MonoBehaviour
 
     private void LightCandle()
     {
-        candle.EnableLight();
+        StartCoroutine(candle.EnableLight());
     }
 
     private void UnlightCandle()
@@ -367,7 +386,6 @@ public class dealerScript : MonoBehaviour
     private void Idle()
     {
         anim.CrossFade("godBossIdleAnimation");
-        //anim.wrapMode = WrapMode.Loop;
     }
 
     private void AddCardToHand(GameObject card)
@@ -397,6 +415,9 @@ public class dealerScript : MonoBehaviour
         handValue = 0;
     }
 
+    //If the player has any aces that are still worth 11, the first one in the
+    //hand is converted to a 1 and it returns true. This is used for when a soft hand
+    //becomes a hard hand due to an ace's presence.
     public bool CheckAces()
     {
         GameObject ace = hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11);
@@ -418,6 +439,8 @@ public class dealerScript : MonoBehaviour
         }
     }
 
+    //Called when the player runs out of money.
+    //Plays the cutscene that gives them back money.
     public IEnumerator OutOfMoney()
     {
         yield return new WaitForSeconds(1.5f);
@@ -437,17 +460,19 @@ public class dealerScript : MonoBehaviour
         anim.Play("godBossSnapAnimationMoreMoney");
         while (anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
-        //UI.ChangeFunds(500);
-        //results.SetButtons(true, player.GetBetAmount());
         results.SetSliderMax(200);
         music.PlayMusic();
     }
 
-    private void ChangeUIFunds(int amount) //used only for the out of money animation
+    //Only used for the animation that plays when the player
+    //is out of money.
+    private void ChangeUIFunds(int amount)
     {
         UI.ChangeFunds(amount);
     }
 
+    //Called when the player exits the game while at the table.
+    //Plays the dealer's animation and fades out the music.
     public IEnumerator QuitGame()
     {
         yield return new WaitForSeconds(1.0f);
@@ -465,6 +490,8 @@ public class dealerScript : MonoBehaviour
         candle.KnockOver();
     }
 
+    //A mini-state machine of sorts where the animation is reversed
+    //if the dealer is already pointing at the deck.
     public void TogglePointToDeck()
     {
         if (!pointing)
@@ -482,6 +509,8 @@ public class dealerScript : MonoBehaviour
         pointing = !pointing;
     }
 
+    //This is used to allow the dealer to speak during animations
+    //using Unity's animation tool alone.
     private void SayLine(AudioClip sound)
     {
         voice.clip = sound;
