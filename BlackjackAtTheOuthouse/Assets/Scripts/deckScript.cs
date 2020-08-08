@@ -77,8 +77,8 @@ public class deckScript : MonoBehaviour
 
     public void ShuffleAndRefill()
     {
-        Shuffle();
         iterator = Deck.Count - 1;
+        Shuffle();
         StartCoroutine(ReturnScale());
     }
 

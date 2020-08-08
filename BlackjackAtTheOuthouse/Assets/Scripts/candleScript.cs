@@ -9,13 +9,14 @@ public class candleScript : MonoBehaviour
     private Animation anim;
     private ParticleSystem flame;
     [SerializeField] AudioClip whoosh;
+    [SerializeField] AudioClip burning;
 
     private bool isLit;
 
     private void Awake()
     {
         candlelight = transform.GetChild(3).gameObject.GetComponent<Light>();
-        sound = gameObject.GetComponent<AudioSource>();
+        sound = candlelight.gameObject.GetComponent<AudioSource>();
         anim = gameObject.GetComponent<Animation>();
         flame = candlelight.gameObject.GetComponent<ParticleSystem>();
     }
@@ -33,7 +34,10 @@ public class candleScript : MonoBehaviour
         float targetIntensity = candlelight.intensity;
         candlelight.intensity *= 2;
         StartCoroutine(FlameDanceLoop());
-        sound.clip = whoosh;
+        //sound.clip = whoosh;
+        //sound.Play();
+        sound.PlayOneShot(whoosh);
+        sound.clip = burning;
         sound.Play();
         flame.Play();
         while(candlelight.intensity > targetIntensity)
@@ -84,6 +88,7 @@ public class candleScript : MonoBehaviour
     public void DisableLight()
     {
         //put light turning off sound here
+        sound.Stop();
         isLit = false;
         candlelight.gameObject.SetActive(false);
         flame.Stop();
