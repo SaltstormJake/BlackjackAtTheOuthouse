@@ -21,17 +21,11 @@ public class resultsScreenScript : MonoBehaviour
         betSlider.onValueChanged.AddListener(OnValueChangedBetSlider);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         DisableAll();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     void OnValueChangedBetSlider(float value)
     {

@@ -15,16 +15,9 @@ public class mainMenuCreditsScript : MonoBehaviour
         mainMenuButton.onClick.AddListener(OnMainMenuClick);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         SetScreen(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void SetScreen(bool enabled)

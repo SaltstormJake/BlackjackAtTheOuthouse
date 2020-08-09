@@ -21,7 +21,7 @@ public class mainMenuScript : MonoBehaviour
     {
         menuElements = GameObject.FindGameObjectsWithTag("menuOnly");
     }
-    // Start is called before the first frame update
+
     void Start()
     {
         playButton.onClick.AddListener(OnClickPlay);
@@ -30,11 +30,6 @@ public class mainMenuScript : MonoBehaviour
         quitButton.onClick.AddListener(OnClickQuit);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     void OnClickPlay()
     {

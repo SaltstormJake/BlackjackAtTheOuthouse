@@ -237,7 +237,10 @@ public class dealerScript : MonoBehaviour
         player.DoubleBet();
         yield return StartCoroutine(DealCardToPlayer());
         yield return new WaitForSeconds(0.5f);
-        StartCoroutine(Stand());
+        if (player.GetHandValue() > 21 && !player.CheckAces())
+            StartCoroutine(React(blackjackUIScript.Result.PlayerBust));
+        else
+            StartCoroutine(Stand());
     }
 
     //Compares the values of both hands and awards a win accordingly.
@@ -308,7 +311,6 @@ public class dealerScript : MonoBehaviour
         StartCoroutine(player.EndHand(r));
         yield return new WaitForSeconds(1.0f);
         float banterChance = Random.Range(0f, 1f);
-        Debug.Log(banterChance);
         while (voice.isPlaying)
             yield return new WaitForSeconds(0.01f);
         if (UI.GetFunds() <= 0)
