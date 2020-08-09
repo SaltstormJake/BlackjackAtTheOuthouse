@@ -113,8 +113,15 @@ public class dealerScript : MonoBehaviour
     public IEnumerator Hit()
     {
         yield return StartCoroutine(DealCardToPlayer());
-        if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled() && player.GetHandValue() < 21) || player.GetHandValue() == 21)
-            StartCoroutine(Stand());
+        if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
+        {
+            if(player.GetHandValue() > 21 && !player.CheckAces())
+            {
+                StartCoroutine(React(blackjackUIScript.Result.PlayerBust));
+            }
+            else
+                StartCoroutine(Stand());
+        }
         else if (player.GetHandValue() > 21)
         {
             if (player.CheckAces())
@@ -125,8 +132,6 @@ public class dealerScript : MonoBehaviour
             else
                 StartCoroutine(React(blackjackUIScript.Result.PlayerBust));
         }
-        //else if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
-        //    StartCoroutine(Stand());
         else
         {
             UI.SetHitAndStand(true);
@@ -320,6 +325,7 @@ public class dealerScript : MonoBehaviour
         float substantialOrFiller = Random.Range(0.0f, 1.0f);
         if(substantialOrFiller > 0.5f && banterIterator < banterLines.Count)
         {
+            results.DisableText();
             anim.Play(banterLines[banterIterator++].name);
             while (anim.isPlaying) 
                 yield return new WaitForSeconds(0.01f);
