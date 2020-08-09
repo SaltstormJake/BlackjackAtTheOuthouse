@@ -113,7 +113,7 @@ public class dealerScript : MonoBehaviour
     public IEnumerator Hit()
     {
         yield return StartCoroutine(DealCardToPlayer());
-        if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
+        if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled() && player.GetHandValue() < 21) || player.GetHandValue() == 21)
             StartCoroutine(Stand());
         else if (player.GetHandValue() > 21)
         {
@@ -294,19 +294,21 @@ public class dealerScript : MonoBehaviour
                 anim.CrossFade("godBossSpinHeadAnimation");
                 break;
             case blackjackUIScript.Result.Push:
-                anim.CrossFade("godBossShrugAnimation");
+                anim.CrossFade("godBossScratchChinAnimation");
                 break;
         }
         player.ToggleTableLean();
         while (anim.isPlaying)
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         StartCoroutine(player.EndHand(r));
         yield return new WaitForSeconds(1.0f);
         float banterChance = Random.Range(0f, 1f);
         Debug.Log(banterChance);
+        while (voice.isPlaying)
+            yield return new WaitForSeconds(0.01f);
         if (UI.GetFunds() <= 0)
             yield return StartCoroutine(OutOfMoney());
-        else if (banterChance > 0.9f)
+        else if (banterChance > 0.5f)
             yield return StartCoroutine(SayBanter());
         results.SetButtons(true, player.GetBetAmount());
         Idle();
@@ -316,15 +318,20 @@ public class dealerScript : MonoBehaviour
     private IEnumerator SayBanter()
     {
         float substantialOrFiller = Random.Range(0.0f, 1.0f);
-        if(substantialOrFiller > 0.5f)
+        if(substantialOrFiller > 0.5f && banterIterator < banterLines.Count)
         {
-            //substantial
+            anim.Play(banterLines[banterIterator++].name);
+            while (anim.isPlaying) 
+                yield return new WaitForSeconds(0.01f);
         }
         else
         {
-            //filler
+            if (fillerIterator > fillerBanter.Count - 1)
+                fillerIterator = 0;
+            anim.Play(fillerBanter[fillerIterator++].name);
+            while (anim.isPlaying)
+                yield return new WaitForSeconds(0.01f);
         }
-        yield return null;
     }
 
     //Pulls a card from the deck and moves it to the player's hand
@@ -489,6 +496,7 @@ public class dealerScript : MonoBehaviour
         anim.Play("godBossTripAnimation");
         while (voice.isPlaying || anim.isPlaying)
             yield return new WaitForSeconds(0.01f);
+        anim.Play("godBossFarewellAnimation");
         StartCoroutine(music.FadeOut(10));
     }
 

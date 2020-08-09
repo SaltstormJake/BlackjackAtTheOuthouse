@@ -27,7 +27,7 @@ public class mainMenuScript : MonoBehaviour
         playButton.onClick.AddListener(OnClickPlay);
         optionsButton.onClick.AddListener(OnClickOptions);
         creditsButton.onClick.AddListener(OnClickCredits);
-        quitButton.onClick.AddListener(OnClickCredits);
+        quitButton.onClick.AddListener(OnClickQuit);
     }
 
     // Update is called once per frame

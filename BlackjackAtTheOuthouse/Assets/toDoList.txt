@@ -2,10 +2,27 @@ To-do list:
 
 FEATURES:
 Add banter voice lines
+Add goodbye animation
 Touch up UI graphics
 Touch up animations
 Clean up code (GetComponent is apparently costly, minimize it)
 Add comments to code
-add sound to collapse animation (when the table is grabbed)
-fix the animation to make the arm reassembly look more natural
 remove dev tools object when everything is done
+
+BUGS:
+
+
+(both probably fixed)
+Player: 3c, 2d, qd, as, kc
+dealer: kh, 9h
+
+do order:
+3c
+2d
+kh
+9h
+qd
+as
+kc
+
+SOme voice lines get interrupted
