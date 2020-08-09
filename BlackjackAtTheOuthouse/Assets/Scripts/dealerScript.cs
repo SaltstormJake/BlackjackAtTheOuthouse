@@ -113,7 +113,9 @@ public class dealerScript : MonoBehaviour
     public IEnumerator Hit()
     {
         yield return StartCoroutine(DealCardToPlayer());
-        if (player.GetHandValue() > 21)
+        if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
+            StartCoroutine(Stand());
+        else if (player.GetHandValue() > 21)
         {
             if (player.CheckAces())
             {
@@ -123,8 +125,8 @@ public class dealerScript : MonoBehaviour
             else
                 StartCoroutine(React(blackjackUIScript.Result.PlayerBust));
         }
-        else if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
-            StartCoroutine(Stand());
+        //else if ((player.GetHandSize() == 5 && !options.GetFiveCardCharlieToggleDisabled()) || player.GetHandValue() == 21)
+        //    StartCoroutine(Stand());
         else
         {
             UI.SetHitAndStand(true);
@@ -428,6 +430,11 @@ public class dealerScript : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public bool HasAces()
+    {
+        return (hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11) != null);
     }
 
     public void PrintHand()

@@ -28,6 +28,7 @@ public class eyeLightScript : MonoBehaviour
     }
 
     // Update is called once per frame
+    //Sets the illumination of the eyes when the dealer is talking.
     void Update()
     {
         if (voice.isPlaying)

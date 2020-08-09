@@ -61,12 +61,6 @@ public class optionsMenuScript : MonoBehaviour
         SetScreen(false);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void SetScreen(bool enabled)
     {
         foreach (GameObject g in menuElements)

@@ -91,11 +91,15 @@ public class blackjackUIScript : MonoBehaviour
     public void SetPlayerHandValueText(int value)
     {
         playerHandValueTextNumber.text = value.ToString();
+        if (value > 0 && player.HasAces())
+            playerHandValueTextNumber.text += " (or " + (value - 10) + ")";
     }
 
     public void SetDealerHandValueText(int value)
     {
         dealerHandValueTextNumber.text = value.ToString();
+        if (value > 0 && dealer.HasAces())
+            dealerHandValueTextNumber.text += " (or " + (value - 10) + ")";
     }
 
     public void SetFunds(bool enabled)

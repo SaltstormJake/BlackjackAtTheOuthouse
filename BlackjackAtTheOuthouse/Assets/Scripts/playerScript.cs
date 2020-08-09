@@ -24,6 +24,9 @@ public class playerScript : MonoBehaviour
         anim = gameObject.GetComponent<Animation>();
     }
 
+
+    //This is called when the player's hand ends, and determines how
+    //much money they won.
     public IEnumerator EndHand(blackjackUIScript.Result r)
     {
 
@@ -48,7 +51,7 @@ public class playerScript : MonoBehaviour
                 break;
             case blackjackUIScript.Result.BothHaveBlackjack:
                 if (insurance)
-                    winnings = betAmount * 4;
+                    winnings = betAmount * 2;
                 else
                     winnings = betAmount;
                 break;
@@ -70,18 +73,6 @@ public class playerScript : MonoBehaviour
         }
         results.ShowResults(r, winnings);
         UI.ChangeFunds(winnings);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void addToHand(GameObject card)
@@ -134,6 +125,11 @@ public class playerScript : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public bool HasAces()
+    {
+        return (hand.FirstOrDefault(i => i.GetComponent<cardScript>().GetValue() == 11) != null);
     }
 
     public void WalkUpStairs()

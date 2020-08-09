@@ -12,21 +12,10 @@ public class deckScript : MonoBehaviour
     {
         iterator = Deck.Count - 1;
         deckHeight = transform.localScale.y;
-        //originalPosition = transform.position;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    //Creates a card based on the deck's iteration, instantiates 
+    //it, and puts it in the corrent position.
     public GameObject DealCard()
     {
         if (iterator >= 0) //draws cards from the top
@@ -59,11 +48,13 @@ public class deckScript : MonoBehaviour
         }
         else
         {
-            OutOfCards();
+            OutOfCards(); //this should never happen
             return null;
         }
     }
 
+    //Shuffles the cards that remain in the deck based on
+    //the iterator's position.
     public void Shuffle()
     {
         for(int i = 0; i <= iterator; i++)
@@ -75,6 +66,8 @@ public class deckScript : MonoBehaviour
         }
     }
 
+    //Shuffles the deck after placing the iterator back at the start; gains the width back
+    //from having all its cards back.
     public void ShuffleAndRefill()
     {
         iterator = Deck.Count - 1;
@@ -82,6 +75,8 @@ public class deckScript : MonoBehaviour
         StartCoroutine(ReturnScale());
     }
 
+
+    //Returns a deck to its original size after being shrunk due to losing cards.
     private IEnumerator ReturnScale()
     {
         while(transform.localScale.y < deckHeight)

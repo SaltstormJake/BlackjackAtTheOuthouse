@@ -38,6 +38,7 @@ public class resultsScreenScript : MonoBehaviour
         betTextNumber.text = value.ToString();
     }
 
+    //Shows the ending results based on how the hand ended up.
     public void ShowResults(blackjackUIScript.Result r, int amount)
     {
         resultText.gameObject.SetActive(true);
