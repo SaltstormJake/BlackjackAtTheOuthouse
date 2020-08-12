@@ -88,10 +88,11 @@ public class dealerScript : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(DealCardToPlayer());
+        yield return StartCoroutine(DealCardToSelf());
         yield return StartCoroutine(DealCardToPlayer());
         if (player.GetHandValue() > 21)
             player.CheckAces();
-        yield return StartCoroutine(DealCardToSelf());
+        //yield return StartCoroutine(DealCardToSelf());
         yield return StartCoroutine(DealCardToSelfFaceDown());
         yield return new WaitForSeconds(0.5f);
         anim.CrossFade("godBossDeckIdleAnimation");
